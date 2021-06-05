@@ -3,8 +3,8 @@
 <h3 align="center">A set of features based on SpigotAPI with support for update and multi-version</h3>
 
 
-<li align="left"><img align="center" width="40px" src="https://theminecrafthosting.com/img/JAR-Icons/papermc_logomark_500.png"> <strong>This common at the moments supports: 1.8x-1.16x versions</strong></li>
-<li align="left"><img align="center" width="40px" src="https://media2.giphy.com/media/6IAzxmKVaYDLFMe1Aw/giphy.gif"> <strong>Developed with ❤️ by UzmStudio Inc. (JotaMPê)</strong></li>
+<li align="left"><img align="center" width="40px" src="https://theminecrafthosting.com/img/JAR-Icons/papermc_logomark_500.png"> This common at the moments supports: <strong>1.8x-1.16x versions</strong></li>
+<li align="left"><img align="center" width="40px" src="https://media2.giphy.com/media/6IAzxmKVaYDLFMe1Aw/giphy.gif">Developed with ❤️ by <strong>UzmStudio Inc. (JotaMPê)</strong></li>
 
 <h1 align="center">UzmStudio Inc. official plugins that use:</h1>
 
