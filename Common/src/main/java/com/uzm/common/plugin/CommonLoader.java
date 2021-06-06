@@ -6,9 +6,12 @@ import com.uzm.common.libraries.npclib.NPCLibrary;
 import com.uzm.common.nms.NMS;
 import com.uzm.common.plugin.abstracts.UzmLoader;
 import com.uzm.common.plugin.abstracts.UzmPlugin;
+import com.uzm.common.plugin.logger.CustomLogger;
 import com.uzm.common.plugin.updater.Updater;
 import com.uzm.common.spigot.enums.MinecraftVersion;
 import org.bukkit.Bukkit;
+
+import java.util.logging.Level;
 
 public class CommonLoader extends UzmLoader {
 
@@ -27,13 +30,16 @@ public class CommonLoader extends UzmLoader {
 
     @Override
     public void libraries() {
-        Bukkit.getServer().getConsoleSender().sendMessage("§b[UzmCommons] §aVersion §f" + Bukkit.getBukkitVersion() + " §aidentified.");
-        if (Bukkit.getBukkitVersion().contains("1.8")) {
-            if (NMS.setupNMS()) {
-                Bukkit.getServer().getConsoleSender().sendMessage("§b[UzmCommons] §aLoading NMSImpls (1.8 version).");
-                NPCLibrary.setupNPCs(getUzmPlugin());
-                HologramLibrary.setupHolograms(getUzmPlugin());
-            }
+        ((CustomLogger) getUzmPlugin().getLogger()).getModule("NMS").info("§aSpigotAPI version §f§n" + MinecraftVersion.getCurrentVersion().getVersion() + " §aidentified!");
+        if (NMS.setupNMS()) {
+            ((CustomLogger) getUzmPlugin().getLogger()).getModule("NMS").info("§aNMS module version §f§n" + MinecraftVersion.getCurrentVersion().getVersion() + " §abridged!");
+            NPCLibrary.setupNPCs(getUzmPlugin());
+            HologramLibrary.setupHolograms(getUzmPlugin());
+            ((CustomLogger) getUzmPlugin().getLogger()).getModule("Libraries").info("§fHologram and NPC §alibrary loaded.");
+
+        } else {
+            ((CustomLogger) getUzmPlugin().getLogger()).getModule("NMS").log(Level.WARNING, "SpigotAPI version §f§n" + MinecraftVersion.getCurrentVersion().getVersion() + "§eis unsupported so far (" + getUzmPlugin().getDescription().getVersion()+ ")");
+
         }
 
 

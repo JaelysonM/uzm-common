@@ -7,8 +7,8 @@ import com.uzm.common.libraries.npclib.api.NPC;
 import com.uzm.common.libraries.npclib.npc.skin.SkinnableEntity;
 import com.uzm.common.nms.interfaces.IArmorStand;
 import com.uzm.common.nms.interfaces.INMS;
-import com.uzm.common.spigot.enums.MinecraftVersion;
 import com.uzm.common.spigot.features.Titles;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -23,14 +23,24 @@ public class NMS {
 
     private static INMS BRIDGE;
 
-
     public static boolean setupNMS() {
-        if (MinecraftVersion.getCurrentVersion().getCompareId() == 183) {
-            // BRIDGE = new NMS1_8R3();
+        try {
+            BRIDGE = (INMS) Class.forName("com.uzm.common.nms.version.v" + getMinecraftRevision() + ".NMSImpl").getConstructor()
+                    .newInstance();
             return true;
+        } catch (Exception err) {
+            return false;
         }
 
-        return false;
+    }
+
+    private static String MINECRAFT_REVISION;
+
+    public static String getMinecraftRevision() {
+        if (MINECRAFT_REVISION == null) {
+            MINECRAFT_REVISION = Bukkit.getServer().getClass().getPackage().getName();
+        }
+        return MINECRAFT_REVISION.substring(MINECRAFT_REVISION.lastIndexOf('.') + 2);
     }
 
     public static ItemStack glow(ItemStack stackToGlow) {
@@ -105,10 +115,6 @@ public class NMS {
 
     public static void replaceTrackerEntry(Player player) {
         BRIDGE.replaceTrackerEntry(player);
-    }
-
-    public static void flyingMoveLogic(Object entity, float f, float f1) {
-        BRIDGE.flyingMoveLogic(entity, f, f1);
     }
 
 

@@ -1,5 +1,6 @@
-package com.uzm.common.containers;
+package com.uzm.common.database.data;
 
+import com.uzm.common.database.data.interfaces.AbstractContainer;
 import com.uzm.common.reflections.Accessors;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -9,11 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Maxter
+ * @author Maxter & JotaMPê
  */
 public class DataContainer {
 
     private Object value;
+    private boolean updated;
 
     public DataContainer(Object value) {
         this.value = value;
@@ -27,35 +29,42 @@ public class DataContainer {
     }
 
     public void set(Object value) {
+        if (this.value == null || !this.value.equals(value)) {
+            this.setUpdated(true);
+        }
         this.value = value;
     }
 
+    public void setUpdated(boolean updated) {
+        this.updated = updated;
+    }
+
     public void addInt(int amount) {
-        this.value = getAsInt() + amount;
+        this.set(getAsInt() + amount);
     }
 
     public void addLong(long amount) {
-        this.value = getAsLong() + amount;
+        this.set(getAsLong() + amount);
     }
 
     public void addDouble(double amount) {
-        this.value = getAsDouble() + amount;
+        this.set(getAsDouble() + amount);
     }
 
     public void removeInt(int amount) {
-        this.value = getAsInt() - amount;
+        this.set(getAsInt() - amount);
     }
 
     public void removeLong(long amount) {
-        this.value = getAsLong() - amount;
+        this.set(getAsLong() - amount);
     }
 
     public void removeDouble(double amount) {
-        this.value = getAsDouble() - amount;
+        this.set(getAsDouble() - amount);
     }
 
     public Object get() {
-        return value;
+        return this.value;
     }
 
     public int getAsInt() {
@@ -71,7 +80,7 @@ public class DataContainer {
     }
 
     public String getAsString() {
-        return value.toString();
+        return this.value.toString();
     }
 
     public boolean getAsBoolean() {
@@ -94,8 +103,11 @@ public class DataContainer {
         }
     }
 
-    private Map<Class<? extends AbstractContainer>, AbstractContainer> containerMap = new HashMap<>();
+    public boolean isUpdated() {
+        return this.updated;
+    }
 
+    private Map<Class<? extends AbstractContainer>, AbstractContainer> containerMap = new HashMap<>();
     @SuppressWarnings("unchecked")
     public <T extends AbstractContainer> T getContainer(Class<T> containerClass) {
         if (!this.containerMap.containsKey(containerClass)) {

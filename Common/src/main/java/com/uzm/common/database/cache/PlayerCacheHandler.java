@@ -1,4 +1,4 @@
-package com.uzm.common.containers.cache;
+package com.uzm.common.database.cache;
 
 import lombok.*;
 import org.bukkit.entity.Player;

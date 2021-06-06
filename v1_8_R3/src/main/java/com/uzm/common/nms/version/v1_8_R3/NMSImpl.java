@@ -14,6 +14,7 @@ import com.uzm.common.nms.NMS;
 import com.uzm.common.nms.interfaces.IArmorStand;
 import com.uzm.common.nms.interfaces.INMS;
 import com.uzm.common.nms.utils.Utils;
+import com.uzm.common.nms.version.v1_8_R3.entity.EntityArmorStand;
 import com.uzm.common.nms.version.v1_8_R3.entity.EntityNPCPlayer;
 import com.uzm.common.nms.version.v1_8_R3.entity.EntityStand;
 import com.uzm.common.nms.version.v1_8_R3.entity.HumanController;
@@ -21,6 +22,7 @@ import com.uzm.common.nms.version.v1_8_R3.entity.npcs.*;
 import com.uzm.common.nms.version.v1_8_R3.utils.PlayerlistTrackerEntry;
 import com.uzm.common.nms.version.v1_8_R3.utils.UUIDMetadataStore;
 import com.uzm.common.plugin.Common;
+import com.uzm.common.plugin.logger.CustomLogger;
 import com.uzm.common.reflections.Accessors;
 import com.uzm.common.reflections.acessors.FieldAccessor;
 import com.uzm.common.spigot.features.Titles;
@@ -30,7 +32,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -44,6 +45,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.logging.Level;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class NMSImpl implements INMS {
@@ -54,33 +56,47 @@ public class NMSImpl implements INMS {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK =
             EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
 
-    private static final FieldAccessor<List> PATHFINDERGOAL_B;
-    private static final FieldAccessor<List> PATHFINDERGOAL_C;
-    private static final FieldAccessor<Map> CLASS_TO_ID;
-    private static final FieldAccessor<Map> CLASS_TO_NAME;
+
+    private static Field TRACKED_ENTITY_SET;
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
+    private static FieldAccessor<List> PATHFINDERGOAL_B;
+    private static FieldAccessor<List> PATHFINDERGOAL_C;
+
 
     static {
-        CLASS_TO_ID = Accessors.getField(EntityTypes.class, "f", Map.class);
-        CLASS_TO_NAME = Accessors.getField(EntityTypes.class, "d", Map.class);
         PATHFINDERGOAL_B = Accessors.getField(PathfinderGoalSelector.class, 0, List.class);
         PATHFINDERGOAL_C = Accessors.getField(PathfinderGoalSelector.class, 1, List.class);
 
+        try {
+            Field field = Accessors.getField(EntityTypes.class, "f").getHandle();
+            ENTITY_CLASS_TO_INT = (Map<Class<?>, Integer>) field.get(null);
+            field = Accessors.getField(EntityTypes.class, "d").getHandle();
+            ENTITY_CLASS_TO_NAME = (Map<Class<?>, String>) field.get(null);
+        } catch (Exception e) {
+            ((CustomLogger) Common.getInstance().getLogger()).getModule("NMS").log(Level.SEVERE, "uzm-common.nms-errors.getting-id-mapping", e);
+        }
+        try {
+            TRACKED_ENTITY_SET = Accessors.getField(EntityTracker.class, "c").getHandle();
+        } catch (Exception e) {
+            ((CustomLogger) Common.getInstance().getLogger()).getModule("NMS").log(Level.SEVERE, "uzm-common.nms-errors.getting-track-entity-set", e);
 
-        ENTITY_CLASS_TO_INT = CLASS_TO_ID.get(null);
-        ENTITY_CLASS_TO_NAME = CLASS_TO_NAME.get(null);
+        }
     }
 
     public NMSImpl() {
         SET_TRACKERS = Accessors.getField(EntityTracker.class, "c", Set.class);
-
 
         FieldAccessor<PlayerMetadataStore> metadatastore = Accessors.getField(CraftServer.class, "playerMetadata", PlayerMetadataStore.class);
         if (!(metadatastore.get(Bukkit.getServer()) instanceof UUIDMetadataStore)) {
             metadatastore.set(Bukkit.getServer(), new UUIDMetadataStore());
         }
 
+        loadEntityTypes();
+    }
+
+
+    protected void loadEntityTypes() {
         EntityControllers.registerEntityController(EntityType.PLAYER, HumanController.class);
         EntityControllers.registerEntityController(EntityType.BLAZE, BlazeController.class);
         EntityControllers.registerEntityController(EntityType.ZOMBIE, ZombieController.class);
@@ -99,7 +115,6 @@ public class NMSImpl implements INMS {
         EntityControllers.registerEntityController(EntityType.PIG_ZOMBIE, PigZombieController.class);
         EntityControllers.registerEntityController(EntityType.SLIME, SlimeController.class);
     }
-
 
     @Override
     public void registerEntityClass(Class<?> clazz) {
@@ -485,7 +500,7 @@ public class NMSImpl implements INMS {
         }
     }
 
-    public void flyingMoveLogic(Object e, float f, float f1) {
+    public static void flyingMoveLogic(Object e, float f, float f1) {
         EntityLiving entity = (EntityLiving) e;
         if (entity.bM()) {
             if ((entity.V())) {
@@ -655,7 +670,7 @@ public class NMSImpl implements INMS {
             return null;
         }
 
-        if (!(entity instanceof CraftArmorStand)) {
+        if (!(entity instanceof EntityArmorStand.CraftArmorStand)) {
             return null;
         }
 

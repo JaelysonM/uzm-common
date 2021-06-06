@@ -5,26 +5,26 @@
     <parent>
         <groupId>com.uzm</groupId>
         <artifactId>uzm-common-modules</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.1</version>
     </parent>
     <artifactId>uzm-common-v1_8_R3</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
+        <craftbukkit.version>1.8.8-R0.1-SNAPSHOT</craftbukkit.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>uzm-common-main</artifactId>
-            <version>${project.version}</version>
+            <version>${parent.version}</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>${spigot.version}</version>
+            <version>${craftbukkit.version}</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -40,8 +40,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 

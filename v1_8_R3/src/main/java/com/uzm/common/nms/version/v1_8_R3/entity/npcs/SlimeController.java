@@ -7,6 +7,7 @@ import com.uzm.common.libraries.npclib.npc.AbstractNPC;
 import com.uzm.common.libraries.npclib.npc.ai.NPCHolder;
 import com.uzm.common.nms.NMS;
 import com.uzm.common.nms.utils.Utils;
+import com.uzm.common.nms.version.v1_8_R3.NMSImpl;
 import com.uzm.common.nms.version.v1_8_R3.utils.player.PlayerControllerMove;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
@@ -154,7 +155,7 @@ public class SlimeController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.g(f, f1);
             } else {
-                NMS.flyingMoveLogic(this, f, f1);
+                NMSImpl.flyingMoveLogic(this, f, f1);
             }
         }
 

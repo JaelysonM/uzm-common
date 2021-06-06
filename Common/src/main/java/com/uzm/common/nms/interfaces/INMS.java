@@ -55,8 +55,6 @@ public interface INMS {
 
     void removeFromPlayerList(Player type);
 
-    void flyingMoveLogic(Object entity, float f, float f1);
-
     void removeFromServerPlayerList(Player player);
 
     void setSize(Object entity, float f, float f1, boolean justCreated);

@@ -10,6 +10,7 @@ import com.uzm.common.libraries.npclib.npc.skin.SkinPacketTracker;
 import com.uzm.common.libraries.npclib.npc.skin.SkinnableEntity;
 import com.uzm.common.libraries.npclib.trait.LookClose;
 import com.uzm.common.nms.NMS;
+import com.uzm.common.nms.version.v1_8_R3.NMSImpl;
 import com.uzm.common.nms.version.v1_8_R3.network.EmptyNetHandler;
 import com.uzm.common.nms.version.v1_8_R3.utils.player.PlayerControllerJump;
 import com.uzm.common.nms.version.v1_8_R3.utils.player.PlayerControllerLook;
@@ -114,7 +115,7 @@ public class EntityNPCPlayer extends EntityPlayer implements NPCHolder, Skinnabl
     if (npc == null || !npc.isFlyable()) {
       super.g(f, f1);
     } else {
-      NMS.flyingMoveLogic(this, f, f1);
+      NMSImpl.flyingMoveLogic(this, f, f1);
     }
   }
 

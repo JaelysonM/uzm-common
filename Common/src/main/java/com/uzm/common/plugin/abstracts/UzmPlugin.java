@@ -1,10 +1,17 @@
 package com.uzm.common.plugin.abstracts;
 
+import com.uzm.common.plugin.logger.CustomLogger;
+import com.uzm.common.reflections.Accessors;
+import com.uzm.common.reflections.acessors.FieldAccessor;
 import lombok.Getter;
+import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
 public abstract class UzmPlugin extends JavaPlugin {
+
+
+    private static final FieldAccessor<PluginLogger> LOGGER_ACCESSOR = Accessors.getField(JavaPlugin.class, "logger", PluginLogger.class);
 
     protected long bootTime;
     private UzmLoader loader;
@@ -24,6 +31,8 @@ public abstract class UzmPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        LOGGER_ACCESSOR.set(this, new CustomLogger(this));
 
         this.bootTime = System.currentTimeMillis();
         this.filePath = getFile().getPath();

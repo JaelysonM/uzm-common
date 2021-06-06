@@ -1,4 +1,4 @@
-package com.uzm.common.containers.cache;
+package com.uzm.common.database.cache;
 
 import com.google.common.collect.ImmutableList;
 import com.uzm.common.reflections.Accessors;
@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 @AllArgsConstructor
 @Data(staticConstructor = "of")
 public abstract class CacheHandler {
+
 
 
     public abstract void gc();

@@ -1,4 +1,6 @@
-package com.uzm.common.containers;
+package com.uzm.common.database.data.interfaces;
+
+import com.uzm.common.database.data.DataContainer;
 
 /**
  * @author Maxter
