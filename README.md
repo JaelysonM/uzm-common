@@ -20,16 +20,130 @@
 Some usages
 ------
 
-The `Handler.Cache` class is how you build an AnvilGUI. 
-The following methods allow you to modify various parts of the displayed GUI. Javadocs are available [here](http://docs.wesjd.net/AnvilGUI/).
+The `CacheHandler` class is a handler to facilitate the creation of cache containers.
+Below is a practical use of this handler:
 
-#### `onClose(Consumer<Player>)` 
-Takes a `Consumer<Player>` argument that is called when a player closes the anvil gui.
+#### [`CacheHandler`](https://github.com/JaelysonM/uzm-common/blob/5d11deb5b6999460beab13c5550be96d888fff40/Common/src/main/java/com/uzm/common/containers/cache/CacheHandler.java)
 ```java                                             
-builder.onClose(player -> {                         
-    player.sendMessage("You closed the inventory.");
-});   
+public class ExampleContainer extends CacheHandler {
+    private String exampleString = "Example"Q;
+
+    public ExampleContainer(String exampleString) {
+        this.exampleString = exampleString;
+    }
+
+    @Override
+    public void gc() {
+        // Here you will "clear" the variables from the cache to help the Garbage Collector.
+
+        this.exampleString = null; // Declare as null...
+    }
+
+    @Override
+    public void save(boolean async) {
+     /*
+     Here you will put your business rule to save something in a database,
+     it can be async or not, but the use of this method is optional.
+     */
+        // database.update(key,this); hypothetical example.
+    }
+
+
+    @Override
+    public void load() {
+     /*
+     Here you will put your business rule to load something from database,
+     but the use of this method is optional.
+     */
+        // database.load(key); hypothetical example.
+    }
+}   
 ```
+
+The `PlayerCacheHandler` class is extension from `CacheHandler`, which facilitate the creation of player cache containers.
+This handler already contains the `getPlayer()` and `getUuid()` methods.
+Below is a practical use of this handler:
+
+#### [`PlayerCacheHandler`](https://github.com/JaelysonM/uzm-common/blob/5d11deb5b6999460beab13c5550be96d888fff40/Common/src/main/java/com/uzm/common/containers/cache/PlayerCacheHandler.java)
+```java                                             
+public class PlayerExampleContainer extends PlayerCacheHandler {
+    private String exampleString = "Example";
+
+    public PlayerExampleContainer(Player player, String uuid) {
+        super(player, uuid);
+    }
+
+
+    @Override
+    public void gc() {
+        // Here you will "clear" the variables from the cache to help the Garbage Collector.
+
+        this.exampleString = null; // Declare as null...
+    }
+
+    @Override
+    public void save(boolean async) {
+     /*
+     Here you will put your business rule to save something in a database,
+     it can be async or not, but the use of this method is optional.
+     */
+        // database.update(key,this); hypothetical example.
+    }
+
+
+    @Override
+    public void load() {
+     /*
+     Here you will put your business rule to load something from database,
+     but the use of this method is optional.
+     */
+        // database.load(key); hypothetical example.
+    }
+}
+```
+
+The `PlayerCacheHandler` and `CacheHandler` classes have built-in methods, which are `getCache()`, `collections()` and `destroy()`
+
+Now let's see the use of each one
+
+#### `getCache(String, Class<T>, Object...)`
+
+This method has two bears, if there was a record in the cache with the `String`, it will return a `CompletebleFuture<T>` from the container of `Class<T>`.
+
+```java
+
+   ExampleContainer container = CacheHandler.getCache("exampleUniqueKey", ExampleContainer.class).join();
+   
+   System.out.println(container.getSomething());
+   
+   // or...
+   
+   PlayerExampleContainer container = PlayerCacheHandler.getCache("exampleUniqueKey", PlayerExampleContainer.class).join();
+   
+   container.getPlayer().sendMessage("Hello");
+
+```
+
+But if there isn't something registered in the `Class<T>` cache with the `String`, it will create a new one from the `Object...`
+
+
+```java
+
+   ExampleContainer container = CacheHandler.getCache("exampleUniqueKey", ExampleContainer.class, "something").join();
+   
+   System.out.println(container.getSomething());
+   
+   // or...
+   
+   Player player;
+   String uuid;
+   
+   PlayerExampleContainer container = PlayerCacheHandler.getCache("exampleUniqueKey", PlayerExampleContainer.class, player, uuid).join();
+   
+   container.getPlayer().sendMessage("Hello");
+
+```
+
 Maven Information
 ------
 
