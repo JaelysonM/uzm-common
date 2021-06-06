@@ -16,6 +16,20 @@
     <ul><strong>faithmc.machine (Private)</strong></ul>
     <ul><strong>flowcraft.farming (Private)</strong></ul></div>
 
+
+Some usages
+------
+
+The `Handler.Cache` class is how you build an AnvilGUI. 
+The following methods allow you to modify various parts of the displayed GUI. Javadocs are available [here](http://docs.wesjd.net/AnvilGUI/).
+
+#### `onClose(Consumer<Player>)` 
+Takes a `Consumer<Player>` argument that is called when a player closes the anvil gui.
+```java                                             
+builder.onClose(player -> {                         
+    player.sendMessage("You closed the inventory.");
+});   
+```
 Maven Information
 ------
 
