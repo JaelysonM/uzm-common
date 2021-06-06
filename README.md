@@ -26,7 +26,7 @@ Below is a practical use of this handler:
 #### [`CacheHandler`](https://github.com/JaelysonM/uzm-common/blob/5d11deb5b6999460beab13c5550be96d888fff40/Common/src/main/java/com/uzm/common/containers/cache/CacheHandler.java)
 ```java                                             
 public class ExampleContainer extends CacheHandler {
-    private String exampleString = "Example"Q;
+    private String exampleString = "Example";
 
     public ExampleContainer(String exampleString) {
         this.exampleString = exampleString;
