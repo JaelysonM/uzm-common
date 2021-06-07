@@ -9,10 +9,8 @@
 <h1 align="center">UzmStudio Inc. official plugins that use:</h1>
 
  <div align="center" position="absolute">
-    <ul><strong>luth.randomspawn (Private)</strong></ul>
     <ul><strong>uzm.durability (Private)</strong></ul>
     <ul><strong>flowcraft.anticheat (Private)</strong></ul>
-    <ul><strong>luth.randomspawn (Private)</strong></ul>
     <ul><strong>faithmc.machine (Private)</strong></ul>
     <ul><strong>flowcraft.farming (Private)</strong></ul></div>
 
