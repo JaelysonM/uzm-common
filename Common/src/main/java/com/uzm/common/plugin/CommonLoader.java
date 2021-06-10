@@ -9,13 +9,17 @@ import com.uzm.common.plugin.abstracts.UzmPlugin;
 import com.uzm.common.plugin.logger.CustomLogger;
 import com.uzm.common.plugin.updater.Updater;
 import com.uzm.common.spigot.enums.MinecraftVersion;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
 import java.util.logging.Level;
 
+@Getter(AccessLevel.PUBLIC)
 public class CommonLoader extends UzmLoader {
 
     private LagController lagController;
+    private Updater updater;
 
     public CommonLoader(UzmPlugin uzmPlugin, String commandsPath, String listenersPath, String protocolsPath) {
         super(uzmPlugin, commandsPath, listenersPath, protocolsPath);
@@ -25,7 +29,10 @@ public class CommonLoader extends UzmLoader {
     public void managers() {
         this.lagController = new LagController();
         Bukkit.getScheduler().runTaskTimerAsynchronously(this.getUzmPlugin(), this.lagController, 0, 1);
-        Bukkit.getScheduler().runTask(this.getUzmPlugin(), () -> new Updater(this.getUzmPlugin()).run());
+        Bukkit.getScheduler().runTask(this.getUzmPlugin(), () -> {
+            this.updater = new Updater(this.getUzmPlugin());
+            this.updater.run();
+        });
     }
 
     @Override
@@ -38,7 +45,7 @@ public class CommonLoader extends UzmLoader {
             ((CustomLogger) getUzmPlugin().getLogger()).getModule("Libraries").info("§fHologram and NPC §alibrary loaded.");
 
         } else {
-            ((CustomLogger) getUzmPlugin().getLogger()).getModule("NMS").log(Level.WARNING, "SpigotAPI version §f§n" + MinecraftVersion.getCurrentVersion().getVersion() + "§eis unsupported so far (" + getUzmPlugin().getDescription().getVersion()+ ")");
+            ((CustomLogger) getUzmPlugin().getLogger()).getModule("NMS").log(Level.WARNING, "SpigotAPI version §f§n" + MinecraftVersion.getCurrentVersion().getVersion() + "§eis unsupported so far (" + getUzmPlugin().getDescription().getVersion() + ")");
 
         }
 

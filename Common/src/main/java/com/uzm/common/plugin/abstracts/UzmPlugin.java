@@ -50,8 +50,7 @@ public abstract class UzmPlugin extends JavaPlugin {
                     .sendMessage("§b[" + this.getDescription().getName() + "] §cErro ao carregar o plugin, veja os arquivos de configuração e veja se ele volta.");
             getServer().getConsoleSender()
                     .sendMessage("§b[" + this.getDescription().getName() + "] §cEnvie esse erro para o administrador:");
-            getServer().getConsoleSender()
-                    .sendMessage(err.getMessage());
+            err.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
 

@@ -5,9 +5,11 @@ import com.uzm.common.libraries.holograms.api.Hologram;
 import com.uzm.common.libraries.holograms.api.HologramLine;
 import com.uzm.common.libraries.npclib.api.NPC;
 import com.uzm.common.libraries.npclib.npc.skin.SkinnableEntity;
+import com.uzm.common.nms.interfaces.IAnvilNMS;
 import com.uzm.common.nms.interfaces.IArmorStand;
 import com.uzm.common.nms.interfaces.INMS;
 import com.uzm.common.spigot.features.Titles;
+import com.uzm.common.spigot.inventories.anvil.AnvilMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,10 +24,13 @@ import java.util.Collection;
 public class NMS {
 
     private static INMS BRIDGE;
+    private static IAnvilNMS ANVIL_BRIDGE;
 
     public static boolean setupNMS() {
         try {
             BRIDGE = (INMS) Class.forName("com.uzm.common.nms.version.v" + getMinecraftRevision() + ".NMSImpl").getConstructor()
+                    .newInstance();
+            ANVIL_BRIDGE = (IAnvilNMS) Class.forName("com.uzm.common.nms.version.v" + getMinecraftRevision() + ".anvil.AnvilNMS").getConstructor()
                     .newInstance();
             return true;
         } catch (Exception err) {
@@ -50,6 +55,11 @@ public class NMS {
     public static void sendTitle(Player player, Titles.TitleType type, String bottom, String top, int fadeIn, int stayTime, int fadeOut) {
         BRIDGE.sendTitle(player, type, bottom, top, fadeIn, stayTime, fadeOut);
     }
+
+    public static void open(Player player, AnvilMenu anvilMenu) {
+        ANVIL_BRIDGE.open(player, anvilMenu);
+    }
+
 
     public static void sendActionBar(Player player, String message) {
         BRIDGE.sendActionBar(player, message);

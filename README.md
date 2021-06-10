@@ -157,7 +157,7 @@ Maven Information
 <dependency>
     <groupId>com.uzm</groupId>
     <artifactId>uzm-common</artifactId>
-    <version>2.0.1</version>
+    <version>LATEST</version>
     <scope>provided</scope>
 </dependency>
  ```

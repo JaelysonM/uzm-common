@@ -2,6 +2,8 @@ package com.uzm.common.spigot.inventories;
 
 import com.uzm.common.plugin.Common;
 import com.uzm.common.spigot.items.ItemBuilder;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,105 +15,116 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * @author JotaMPê (UzmStudio)
  */
 
-public class AcceptableInventory extends Menu implements Listener {
 
-    private String[] lore;
-    private Player player;
-    private ItemStack core;
-    private Method handshake;
-    private Object[] params;
+@Getter(AccessLevel.PUBLIC)
+public class AcceptableInventory extends PlayerMenu implements Listener {
 
-    public AcceptableInventory(Player p, ItemStack core, String[] lore) {
-        super("§7Confirmação", 4);
-        this.player = p;
-        this.core = core;
-        this.lore = lore;
+    protected static final ItemStack ACCEPT_ITEM;
+    protected static final ItemStack DECLINE_ITEM;
 
-        Bukkit.getServer().getPluginManager().registerEvents(this, Common.getInstance());
+    static {
+        ACCEPT_ITEM = new ItemBuilder(Material.WOOL).durability(5).durability(5).name("§aConfirmar")
+                .lore("§7Deseja aceitar fazer essa ação?").build();
+        DECLINE_ITEM = new ItemBuilder(Material.WOOL).durability(14).name("§cRecusar")
+                .lore("§7Deseja cancelar essa ação?").build();
+
     }
 
-    public void build(Method m, Object... params) {
+    private ItemStack iconCore;
+    private int maxAwayTime = 30;
 
-        setItem(11, new ItemBuilder(Material.WOOL).durability(14).name("§cRecusar")
-                .lore("§7Deseja cancelar essa ação?").build());
+    private BukkitTask scheduleTask;
 
-        setItem(13, new ItemBuilder(core.clone()).lore(lore).build());
+    private Consumer<Player> accept, decline;
 
-        setItem(15, new ItemBuilder(Material.WOOL).durability(5).durability(5).name("§aConfirmar")
-                .lore("§7Deseja aceitar fazer essa ação?").build());
+    public AcceptableInventory(Player player, ItemStack iconCore) {
+        super(player, "§7Confirmação", 4);
 
-        setItem(31, new ItemBuilder(Material.SEA_LANTERN).amount(30).name("§3Tempo").build());
+        this.iconCore = iconCore;
 
-        this.handshake = m;
-        this.params = params;
-        new BukkitRunnable() {
-            float x = 30.0F;
+        Bukkit.getServer().getPluginManager().registerEvents(this, Common.getInstance());
 
-            @Override
-            public void run() {
-                if (!getInventory().getViewers().contains(player)) {
-                    cancel();
-                } else {
-                    if (x <= 0) {
-                        try {
-                            m.invoke("", params);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        cancel();
-                        HandlerList.unregisterAll(AcceptableInventory.this);
-                        return;
-                    }
-                    x -= 0.5F;
-                    setItem(31, new ItemBuilder(getItem(31).clone())
-                            .amount(Math.round(x) == 0 ? 1 : Math.round(x)).build());
-                    if (x >= 1 && x <= 5 && x == Math.round(x)) {
-                        if (getInventory().getViewers().contains(player)) {
-                            player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
-                        }
-                    }
+        this.setupInventory();
+    }
+
+    public AcceptableInventory setMaxAwayTime(int maxAwayTime) {
+        this.maxAwayTime = maxAwayTime;
+        return this;
+    }
+
+    public AcceptableInventory run(Consumer<Player> accept) {
+        this.run(accept, (player -> {
+            player.sendMessage("§cVocê recusou essa confirmação!");
+            player.closeInventory();
+        }));
+        return this;
+    }
+
+    protected void setupInventory() {
+        this.setItem(11, DECLINE_ITEM);
+        this.setItem(13, this.iconCore);
+        this.setItem(15, ACCEPT_ITEM);
+
+        this.setItem(31, new ItemBuilder(Material.SEA_LANTERN).amount(this.maxAwayTime).name("§3Tempo").build());
+
+    }
+
+    public AcceptableInventory run(Consumer<Player> accept, Consumer<Player> decline) {
+        this.accept = accept;
+        this.decline = decline;
+
+        AtomicInteger offTime = new AtomicInteger(0);
+        this.scheduleTask = Bukkit.getScheduler().runTaskTimerAsynchronously(Common.getInstance(), () -> {
+            setItem(31, new ItemBuilder(getItem(31).clone())
+                    .amount(this.maxAwayTime - offTime.get()).build());
+            if (offTime.incrementAndGet() >= this.maxAwayTime) {
+                accept.accept(this.player);
+                if (this.scheduleTask != null)
+                    this.scheduleTask.cancel();
+                HandlerList.unregisterAll(AcceptableInventory.this);
+            } else {
+                if (offTime.get() >= 1 && offTime.get() <= 5) {
+                    if (this.getInventory().getViewers().contains(this.player))
+                        this.player.playSound(this.player.getLocation(), Sound.CLICK, 1, 1);
                 }
-
             }
-        }.runTaskTimer(Common.getInstance(), 1L, 10L);
-        open(player);
+        }, 0, 20);
+        this.open(this.player);
+        return this;
     }
 
     @EventHandler
-    void click(InventoryClickEvent e) {
-        ItemStack item = e.getCurrentItem();
-        Player p = (Player) e.getWhoClicked();
-        if ((item != null) && (item.hasItemMeta())) {
-            if (e.getInventory().equals(getInventory())) {
-                e.setCancelled(true);
-                if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§aConfirmar")) {
-                    p.closeInventory();
-                    try {
-                        this.handshake.invoke("", params);
-                    } catch (Exception err) {
-                        p.sendMessage("§cNão foi possível confirmar, tente novamente mais tarde.");
+    public void onClick(InventoryClickEvent event) {
+        if (event.getInventory().equals(this.getInventory())) {
+            event.setCancelled(true);
+            if (event.getClickedInventory() != null && event.getClickedInventory().equals(this.getInventory())) {
+                player.updateInventory();
+
+                ItemStack item = event.getCurrentItem();
+                if (item != null && item.getType() != Material.AIR) {
+                    if (item == ACCEPT_ITEM) {
+                        this.accept.accept(this.player);
+                    } else if (item == DECLINE_ITEM) {
+                        this.decline.accept(this.player);
                     }
-
                 }
-                if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§cRecusar")) {
-                    p.sendMessage("§cVocê recusou essa confirmação!");
-                    p.closeInventory();
-
-                }
-
             }
         }
     }
 
+
     public void cancel() {
+        if (this.scheduleTask != null)
+            this.scheduleTask.cancel();
         HandlerList.unregisterAll(this);
     }
 

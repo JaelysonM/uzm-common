@@ -27,6 +27,7 @@ public class Common extends UzmPlugin {
         this.setLoader(uzmLoader);
     }
 
+
     @Override
     public void disable() {
         File update = new File("plugins/" + getDescription().getName() + "/update", getDescription().getName() + ".jar");

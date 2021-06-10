@@ -1,6 +1,6 @@
 author: Uzm Studio Inc.
 name: ${COMMON.NAME}
-version: ${project.version} (build ${buildNumber})
+version: ${project.version} (build b${buildNumber})
 
 main: ${main-bukkit}
 load: STARTUP

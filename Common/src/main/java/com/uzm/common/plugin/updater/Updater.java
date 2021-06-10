@@ -1,7 +1,8 @@
 package com.uzm.common.plugin.updater;
 
-import com.uzm.common.java.util.StringUtils;
 import com.uzm.common.plugin.abstracts.UzmPlugin;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,6 +18,9 @@ import java.nio.charset.StandardCharsets;
 public class Updater {
 
     private UzmPlugin plugin;
+    @Getter(AccessLevel.PUBLIC)
+    private String lastestName;
+
 
     public Updater(UzmPlugin plugin) {
         this.plugin = plugin;
@@ -40,24 +44,23 @@ public class Updater {
                 Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §aNew version found:");
                 Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §c" + current + " to §a" + latest);
                 Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §7Prepare to update and download file...");
-                try {
-                    Thread.sleep(100);
-                    downloadUpdate(json.get("download").toString());
-                } catch (Exception err) {
-                    err.printStackTrace();
-                }
+                downloadUpdate(json.get("download").toString(), latest);
 
 
             }
         }
     }
 
-    public void downloadUpdate(String url) {
+    public void downloadUpdate(String url, String latest) {
         try {
+            String versionExtractor = latest.replace(" build (", "-").replace(")", "");
             File file = new File("plugins/" + this.plugin.getName() + "/update", this.plugin.getName() + ".jar");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
+
+            this.lastestName = this.plugin.getName() + "-" + versionExtractor + ".jar";
+
             HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             int max = connection.getContentLength();
