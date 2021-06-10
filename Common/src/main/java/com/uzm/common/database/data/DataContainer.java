@@ -28,6 +28,8 @@ public class DataContainer {
         this.containerMap = null;
     }
 
+    public void save() {}
+
     public void set(Object value) {
         if (this.value == null || !this.value.equals(value)) {
             this.setUpdated(true);

@@ -138,6 +138,7 @@ public class MySQLDatabase extends DatabaseSolution {
             for (Map.Entry<String, DataContainer> collumn : rows.entrySet()) {
                 if (collumn.getValue().isUpdated()) {
                     collumn.getValue().setUpdated(false);
+                    collumn.getValue().save();
                     query.append("`").append(collumn.getKey()).append("` = ?, ");
                 }
             }
