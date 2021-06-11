@@ -16,7 +16,7 @@
 
 Download the lastest version!
 ------
-https://bit.ly/3pISxHh
+[`Download now!`](https://bit.ly/3pISxHh) :D
 
 Some usages
 ------
