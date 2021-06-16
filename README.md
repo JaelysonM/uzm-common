@@ -14,7 +14,7 @@
     <ul><strong>faithmc.machine (Private)</strong></ul>
     <ul><strong>flowcraft.farming (Private)</strong></ul></div>
 
-Download the lastest version!
+Download the latest version!
 ------
 [`Download now!`](https://bit.ly/3pISxHh) :D
 
