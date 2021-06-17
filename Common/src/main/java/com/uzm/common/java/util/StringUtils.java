@@ -207,7 +207,7 @@ public class StringUtils {
         float remaining = 100 - done;
 
         if (current >= max) {
-            done = max;
+            done = 100;
             remaining = 0;
         }
         StringBuilder barFormat = new StringBuilder();
