@@ -155,9 +155,9 @@ public class PageableMenu {
             this.fixed.forEach(menu::setItem);
             if (items.size() == 0) if (emptyStack != null) menu.setItem(emptySlot, new ItemBuilder(emptyStack).build());
             if (splitted.size() > 1 && i != (splitted.size() - 1))
-                this.setItem(nextPage, new ItemBuilder(nextStack.replace("{page}", String.valueOf((i + 1)))).build());
-            if (i > 1)
-                this.setItem(previousPage, new ItemBuilder(previousStack.replace("{page}", String.valueOf((i + 1)))).build());
+                menu.setItem(nextPage, new ItemBuilder(nextStack.replace("{page}", String.valueOf((i + 1)))).build());
+            if (i > 0)
+                menu.setItem(previousPage, new ItemBuilder(previousStack.replace("{page}", String.valueOf((i + 1)))).build());
 
             if (!this.menus.contains(menu)) this.menus.add(menu);
             this.id.put(menu, i + 1);
