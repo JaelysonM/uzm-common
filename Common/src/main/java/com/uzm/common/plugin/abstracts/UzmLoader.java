@@ -37,6 +37,11 @@ public abstract class UzmLoader {
         this.protocolsPath = protocolsPath;
         this.listenersPath = listenersPath;
 
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            ((CustomLogger) getUzmPlugin().getLogger()).getModule("Hooks").info("§aPlaceholderAPI identified, init hooks and handlers!");
+            this.papiHooked = true;
+        }
+
         this.commands();
         this.listeners();
         this.protocols();
@@ -44,10 +49,6 @@ public abstract class UzmLoader {
         this.libraries();
         this.managers();
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            ((CustomLogger) getUzmPlugin().getLogger()).getModule("Hooks").info("§aPlaceholderAPI identified, init hooks and handlers!");
-            this.papiHooked = true;
-        }
     }
 
     public abstract void managers();

@@ -23,7 +23,7 @@ public class Common extends UzmPlugin {
     public void enable() {
         instance = this;
 
-        UzmLoader uzmLoader = new CommonLoader(this, "com.uzm.common.commands", "com.uzm.common.listeners", "comu.uzm.common.protocol");
+        UzmLoader uzmLoader = new CommonLoader(this, "com.uzm.common.commands", "com.uzm.common.listeners", "com.uzm.common.protocol");
         this.setLoader(uzmLoader);
     }
 
