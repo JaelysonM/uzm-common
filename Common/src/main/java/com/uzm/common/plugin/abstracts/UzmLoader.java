@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
 import com.uzm.common.command.CommandHandler;
 import com.uzm.common.java.util.JavaReflections;
+import com.uzm.common.plugin.logger.CustomLogger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class UzmLoader {
     private UzmPlugin uzmPlugin;
     private PluginManager pluginManager;
+    private boolean papiHooked = false;
 
     protected String listenersPath;
     protected String commandsPath;
@@ -41,6 +43,11 @@ public abstract class UzmLoader {
         this.configurations();
         this.libraries();
         this.managers();
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            ((CustomLogger) getUzmPlugin().getLogger()).getModule("Hooks").info("§aPlaceholderAPI identified, init hooks and handlers!");
+            this.papiHooked = true;
+        }
     }
 
     public abstract void managers();

@@ -6,4 +6,5 @@ main: ${main-bukkit}
 load: STARTUP
 depend:
   - ProtocolLib
+softdepend: [PlaceholderAPI]
 

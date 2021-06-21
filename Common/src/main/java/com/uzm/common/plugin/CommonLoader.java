@@ -24,7 +24,6 @@ public class CommonLoader extends UzmLoader {
     public CommonLoader(UzmPlugin uzmPlugin, String commandsPath, String listenersPath, String protocolsPath) {
         super(uzmPlugin, commandsPath, listenersPath, protocolsPath);
     }
-
     @Override
     public void managers() {
         this.lagController = new LagController();
@@ -33,6 +32,7 @@ public class CommonLoader extends UzmLoader {
             this.updater = new Updater(this.getUzmPlugin());
             this.updater.run();
         });
+
     }
 
     @Override
