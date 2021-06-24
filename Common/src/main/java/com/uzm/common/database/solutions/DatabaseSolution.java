@@ -54,8 +54,8 @@ public abstract class DatabaseSolution extends CacheHandler {
     public static <T extends DatabaseSolution> void register(String databaseName, Class<T> type, String mysqlHost, String mysqlPort, String mysqlDbname, String mysqlUsername, String mysqlPassword, boolean mariadb,
                                                              String mongoURL) {
         if (type == MySQLDatabase.class || type == HirakiDatabase.class) {
-            CacheHandler.getCache(databaseName, type, mysqlHost, mysqlPort, mysqlDbname, mysqlUsername, mysqlPassword, mariadb);
-        }else {
+            CacheHandler.getCache(databaseName, type, Common.getInstance(), mysqlHost, mysqlPort, mysqlDbname, mysqlUsername, mysqlPassword, mariadb);
+        } else {
             // TODO Do more...
         }
     }
