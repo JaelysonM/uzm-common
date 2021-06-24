@@ -12,7 +12,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +31,7 @@ public abstract class DatabaseSolution extends CacheHandler {
 
     private @Getter(AccessLevel.MODULE)
     @Setter(AccessLevel.MODULE)
-    Connection connection;
+    boolean tables;
 
 
     private @Getter(AccessLevel.MODULE)
@@ -39,32 +42,37 @@ public abstract class DatabaseSolution extends CacheHandler {
     private UzmPlugin plugin;
 
 
-    public DatabaseSolution(UzmPlugin plugin) {
+    public DatabaseSolution(UzmPlugin plugin, boolean tables) {
         this.plugin = plugin;
-        this.openConnection();
         this.executorService = Executors.newCachedThreadPool();
+        this.tables = tables;
     }
 
 
-    public static <T extends DatabaseSolution> void register(String databaseName, Class<T> type, String mysqlHost, String mysqlPort, String mysqlDbname, String mysqlUsername, String mysqlPassword, boolean mariadb) {
-        register(databaseName, type, mysqlHost, mysqlPort, mysqlDbname, mysqlUsername, mysqlPassword, mariadb, null);
+    public static <T extends DatabaseSolution> T register(String databaseName, Class<T> type, String mysqlHost, String mysqlPort, String mysqlDbname, String mysqlUsername, String mysqlPassword, boolean mariadb) {
+        return register(databaseName, type, mysqlHost, mysqlPort, mysqlDbname, mysqlUsername, mysqlPassword, mariadb, null);
     }
 
 
-    public static <T extends DatabaseSolution> void register(String databaseName, Class<T> type, String mysqlHost, String mysqlPort, String mysqlDbname, String mysqlUsername, String mysqlPassword, boolean mariadb,
-                                                             String mongoURL) {
-        if (type == MySQLDatabase.class || type == HirakiDatabase.class) {
-            CacheHandler.getCache(databaseName, type, Common.getInstance(), mysqlHost, mysqlPort, mysqlDbname, mysqlUsername, mysqlPassword, mariadb);
+    public static <T extends DatabaseSolution> T register(String databaseName, Class<T> type, String mysqlHost, String mysqlPort, String mysqlDbname, String mysqlUsername, String mysqlPassword, boolean mariadb,
+                                                          String mongoURL) {
+        if (type.isAssignableFrom(MySQLDatabase.class) || type.isAssignableFrom(HirakiDatabase.class)) {
+            return CacheHandler.getCache(databaseName, type, Common.getInstance(), mysqlHost, mysqlPort, mysqlDbname, mysqlUsername, mysqlPassword, mariadb).join();
+        } else if (type.isAssignableFrom(SQLiteDatabase.class)) {
+            return CacheHandler.getCache(databaseName, type, Common.getInstance(), new File("data.db")).join();
         } else {
-            // TODO Do more...
+            return null;
         }
+    }
+
+    public static <T extends DatabaseSolution> T register(String databaseName, Class<T> type) {
+        return register(databaseName, type, null, null, null, null, null, false, null);
     }
 
 
     @Override
     public void gc() {
         this.plugin = null;
-        this.connection = null;
         this.executorService = null;
     }
 
@@ -78,6 +86,10 @@ public abstract class DatabaseSolution extends CacheHandler {
 
     }
 
+    public abstract void createTables();
+
+    public abstract Connection getConnection() throws SQLException;
+
     public abstract void openConnection();
 
     public abstract void close();
@@ -86,9 +98,12 @@ public abstract class DatabaseSolution extends CacheHandler {
 
     public abstract <T extends DataTable> Map<String, Map<String, DataContainer>> load(String key, Class<T>... tables) throws DataLoadExpection;
 
+    public abstract List<String[]> getLeaderBoard(DataTable table, String... columns);
+
     public abstract void save(String name, Map<String, Map<String, DataContainer>> tableMap);
 
     public abstract void saveSync(String name, Map<String, Map<String, DataContainer>> tableMap);
+
 
     public abstract String exists(String name);
 

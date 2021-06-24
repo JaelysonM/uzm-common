@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.uzm.common.database.data.DataContainer;
 import com.uzm.common.database.data.DataTable;
 import com.uzm.common.database.exceptions.DataLoadExpection;
+import com.uzm.common.java.util.StringUtils;
 import com.uzm.common.plugin.abstracts.UzmPlugin;
 
 import javax.sql.rowset.CachedRowSet;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  */
 public class SQLiteDatabase extends DatabaseSolution {
 
+    private Connection connection;
     private File file;
     private boolean mariadb;
 
@@ -29,9 +31,8 @@ public class SQLiteDatabase extends DatabaseSolution {
     }
 
     public SQLiteDatabase(UzmPlugin plugin, File file, boolean tables) {
-        super(plugin);
+        super(plugin, tables);
         this.file = file;
-
         if (!tables) {
             DataTable.listTables().parallelStream().filter(t -> t.getDatabaseSolution() == this).forEach(table -> {
                 this.update(table.getInfo().create());
@@ -41,27 +42,43 @@ public class SQLiteDatabase extends DatabaseSolution {
 
     }
 
-
-    public void openConnection() {
-        try {
-            boolean reconnected = true;
-            if (this.getConnection() != null) {
-                reconnected = false;
-            }
-            Class.forName("org.sqlite.JDBC");
-            this.setConnection(DriverManager.getConnection("jdbc:sqlite:" + file));
-            if (reconnected) {
-
-                LOGGER.info("Trying to reconnect to SQLite Server.");
-                return;
-            }
-
-            LOGGER.info("SQLite Server connected with file output: " + file.getName());
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Database not connected, plugin disabled.", ex);
-            System.exit(0);
+    @Override
+    public void createTables() {
+        if (!this.isTables()) {
+            DataTable.listTables().parallelStream().filter(t -> t.getDatabaseSolution() == this).forEach(table -> {
+                this.update(table.getInfo().create());
+                table.init();
+            });
         }
     }
+
+
+    @Override
+    public List<String[]> getLeaderBoard(DataTable table, String... columns) {
+        List<String[]> result = new ArrayList<>();
+        StringBuilder add = new StringBuilder(), select = new StringBuilder();
+        for (String column : columns) {
+            add.append("`").append(column).append("` + ");
+            select.append("`").append(column).append("`, ");
+        }
+
+        try (CachedRowSet rs = query("SELECT " + select + "`name` FROM `" + table.getInfo().name() + "` ORDER BY " + add + " 0 DESC LIMIT 10")) {
+            if (rs != null) {
+                rs.beforeFirst();
+                while (rs.next()) {
+                    long count = 0;
+                    for (String column : columns) {
+                        count += rs.getLong(column);
+                    }
+                    result.add(new String[]{rs.getString(table.getInfo().key()), StringUtils.formatNumber(count)});
+                }
+            }
+        } catch (SQLException ignore) {
+        }
+
+        return result;
+    }
+
 
     @Override
     public Map<String, Map<String, DataContainer>> load(String key) throws DataLoadExpection {
@@ -144,6 +161,33 @@ public class SQLiteDatabase extends DatabaseSolution {
             values.clear();
         }
     }
+
+    public void openConnection() {
+        try {
+            boolean reconnected = this.getConnection() == null;
+            Class.forName("org.sqlite.JDBC");
+            this.connection = DriverManager.getConnection("jdbc:sqlite:" + file);
+            if (reconnected) {
+                LOGGER.info("Trying to reconnect to SQLite Server.");
+                return;
+            }
+
+            LOGGER.info("SQLite Server connected with file output: " + file.getName());
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Database not connected, plugin disabled.", ex);
+            this.getPlugin().disable();
+        }
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        if (!isConnected()) {
+            this.openConnection();
+        }
+
+        return this.connection;
+    }
+
 
     @Override
     public void close() {

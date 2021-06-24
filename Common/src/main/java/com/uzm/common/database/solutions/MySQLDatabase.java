@@ -5,18 +5,15 @@ import com.google.common.collect.Lists;
 import com.uzm.common.database.data.DataContainer;
 import com.uzm.common.database.data.DataTable;
 import com.uzm.common.database.exceptions.DataLoadExpection;
-import com.uzm.common.plugin.Common;
+import com.uzm.common.java.util.StringUtils;
 import com.uzm.common.plugin.abstracts.UzmPlugin;
-import org.bukkit.Bukkit;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -26,13 +23,14 @@ public class MySQLDatabase extends DatabaseSolution {
 
     private String host, port, database, username, password;
     private boolean mariadb;
+    private Connection connection;
 
     public MySQLDatabase(UzmPlugin plugin, String host, String port, String database, String username, String password, boolean mariadb) {
         this(plugin, host, port, database, username, password, mariadb, false);
     }
 
     public MySQLDatabase(UzmPlugin plugin, String host, String port, String database, String username, String password, boolean mariadb, boolean tables) {
-        super(plugin);
+        super(plugin, tables);
         this.host = host;
         this.mariadb = mariadb;
         this.port = port;
@@ -40,37 +38,43 @@ public class MySQLDatabase extends DatabaseSolution {
         this.username = username;
         this.password = password;
 
-        if (!tables) {
+    }
+
+    @Override
+    public void createTables() {
+        if (!this.isTables()) {
             DataTable.listTables().parallelStream().filter(t -> t.getDatabaseSolution() == this).forEach(table -> {
                 this.update(table.getInfo().create());
                 table.init();
             });
         }
-
     }
 
 
-    public void openConnection() {
-        try {
-            boolean reconnected = true;
-            if (this.getConnection() != null) {
-                reconnected = false;
-            }
-            Class.forName(this.mariadb ? "org.mariadb.jdbc.Driver" : "com.mysql.jdbc.Driver");
-            this.setConnection(DriverManager.getConnection((this.mariadb ?
-                    "jdbc:mariadb://" :
-                    "jdbc:mysql://") + host + ":" + port + "/" + this.database + "?verifyServerCertificate=false&useSSL=false&useUnicode=yes&characterEncoding=UTF-8", username, password));
-            if (reconnected) {
-
-                LOGGER.info("Trying to reconnect to MySQL Server.");
-                return;
-            }
-
-            LOGGER.info("MySQL Server connected with driver: §a" + (mariadb ? "MariaDB" : "MySQL"));
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Database not connected, plugin disabled.", ex);
-            System.exit(0);
+    @Override
+    public List<String[]> getLeaderBoard(DataTable table, String... columns) {
+        List<String[]> result = new ArrayList<>();
+        StringBuilder add = new StringBuilder(), select = new StringBuilder();
+        for (String column : columns) {
+            add.append("`").append(column).append("` + ");
+            select.append("`").append(column).append("`, ");
         }
+
+        try (CachedRowSet rs = query("SELECT " + select + "`name` FROM `" + table.getInfo().name() + "` ORDER BY " + add + " 0 DESC LIMIT 10")) {
+            if (rs != null) {
+                rs.beforeFirst();
+                while (rs.next()) {
+                    long count = 0;
+                    for (String column : columns) {
+                        count += rs.getLong(column);
+                    }
+                    result.add(new String[]{rs.getString(table.getInfo().key()), StringUtils.formatNumber(count)});
+                }
+            }
+        } catch (SQLException ignore) {
+        }
+
+        return result;
     }
 
     @Override
@@ -154,6 +158,36 @@ public class MySQLDatabase extends DatabaseSolution {
             values.clear();
         }
     }
+
+    public void openConnection() {
+        try {
+            boolean reconnected = this.getConnection() == null;
+            Class.forName(this.mariadb ? "org.mariadb.jdbc.Driver" : "com.mysql.jdbc.Driver");
+            this.connection = (DriverManager.getConnection((this.mariadb ?
+                    "jdbc:mariadb://" :
+                    "jdbc:mysql://") + host + ":" + port + "/" + this.database + "?verifyServerCertificate=false&useSSL=false&useUnicode=yes&characterEncoding=UTF-8", username, password));
+            if (reconnected) {
+
+                LOGGER.info("Trying to reconnect to MySQL Server.");
+                return;
+            }
+
+            LOGGER.info("MySQL Server connected with driver: §a" + (mariadb ? "MariaDB" : "MySQL"));
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Database not connected, plugin disabled.", ex);
+            this.getPlugin().disable();
+        }
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        if (!isConnected()) {
+            this.openConnection();
+        }
+
+        return this.connection;
+    }
+
 
     @Override
     public void close() {

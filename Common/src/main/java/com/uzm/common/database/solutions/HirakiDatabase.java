@@ -1,24 +1,19 @@
 package com.uzm.common.database.solutions;
 
 
-import com.google.common.collect.Lists;
 import com.uzm.common.database.data.DataContainer;
 import com.uzm.common.database.data.DataTable;
 import com.uzm.common.database.exceptions.DataLoadExpection;
-import com.uzm.common.plugin.Common;
+import com.uzm.common.java.util.StringUtils;
 import com.uzm.common.plugin.abstracts.UzmPlugin;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.bukkit.Bukkit;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +30,7 @@ public class HirakiDatabase extends DatabaseSolution {
     }
 
     public HirakiDatabase(UzmPlugin plugin, String host, String port, String database, String username, String password, boolean mariadb, boolean tables) {
-        super(plugin);
+        super(plugin, tables);
         this.host = host;
         this.mariadb = mariadb;
         this.port = port;
@@ -43,36 +38,44 @@ public class HirakiDatabase extends DatabaseSolution {
         this.username = username;
         this.password = password;
 
-        if (!tables) {
+    }
+
+    @Override
+    public void createTables() {
+        if (!this.isTables()) {
+
             DataTable.listTables().parallelStream().filter(t -> t.getDatabaseSolution() == this).forEach(table -> {
                 this.update(table.getInfo().create());
                 table.init();
             });
         }
-
     }
 
 
-    public void openConnection() {
-
-
-        try {
-            HikariConfig config = new HikariConfig();
-            config.setPoolName("mConnectionPool");
-            config.setMaximumPoolSize(32);
-            config.setConnectionTimeout(30000L);
-            config.setDriverClassName(this.mariadb ? "org.mariadb.jdbc.Driver" : "com.mysql.jdbc.Driver");
-            config.setJdbcUrl((this.mariadb ? "jdbc:mariadb://" : "jdbc:mysql://") + this.host + ":" + this.port + "/" + this.database);
-            config.setUsername(this.username);
-            config.setPassword(this.password);
-            config.addDataSourceProperty("autoReconnect", "true");
-            this.dataSource = new HikariDataSource(config);
-            this.setConnection(this.dataSource.getConnection());
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Database not connected, plugin disabled.", ex);
-            System.exit(0);
+    @Override
+    public List<String[]> getLeaderBoard(DataTable table, String... columns) {
+        List<String[]> result = new ArrayList<>();
+        StringBuilder add = new StringBuilder(), select = new StringBuilder();
+        for (String column : columns) {
+            add.append("`").append(column).append("` + ");
+            select.append("`").append(column).append("`, ");
         }
-        LOGGER.info("MySQL(HirakiEngine) Server connected with driver: §a" + (mariadb ? "MariaDB" : "MySQL"));
+
+        try (CachedRowSet rs = query("SELECT " + select + "`name` FROM `" + table.getInfo().name() + "` ORDER BY " + add + " 0 DESC LIMIT 10")) {
+            if (rs != null) {
+                rs.beforeFirst();
+                while (rs.next()) {
+                    long count = 0;
+                    for (String column : columns) {
+                        count += rs.getLong(column);
+                    }
+                    result.add(new String[]{rs.getString(table.getInfo().key()), StringUtils.formatNumber(count)});
+                }
+            }
+        } catch (SQLException ignore) {
+        }
+
+        return result;
     }
 
     @Override
@@ -84,12 +87,11 @@ public class HirakiDatabase extends DatabaseSolution {
     public <T extends DataTable> Map<String, Map<String, DataContainer>> load(String key, Class<T>... tables) throws DataLoadExpection {
         Map<String, Map<String, DataContainer>> tableMap = new HashMap<>();
         for (DataTable table : DataTable.listTables().stream().filter(t -> t.getDatabaseSolution() == this).collect(Collectors.toList())) {
-            if (tables.length > 0 && Lists.newArrayList(tables).contains(table.getClass())) {
+            if (tables.length > 0 && Arrays.stream(tables).noneMatch(c -> table.getClass().isAssignableFrom(table.getClass()))) {
                 return null;
             }
             Map<String, DataContainer> containerMap = new LinkedHashMap<>();
             tableMap.put(table.getInfo().name(), containerMap);
-
             try (CachedRowSet rs = this.query(table.getInfo().select(), key.toLowerCase())) {
                 if (rs != null) {
                     for (int collumn = 2; collumn <= rs.getMetaData().getColumnCount(); collumn++) {
@@ -157,6 +159,28 @@ public class HirakiDatabase extends DatabaseSolution {
         }
     }
 
+    @Override
+    public void openConnection() {
+        HikariConfig config = new HikariConfig();
+        config.setPoolName("uzm-pool");
+        config.setMaximumPoolSize(32);
+        config.setConnectionTimeout(30000L);
+        config.setDriverClassName(this.mariadb ? "org.mariadb.jdbc.Driver" : "com.mysql.jdbc.Driver");
+        config.setJdbcUrl((this.mariadb ? "jdbc:mariadb://" : "jdbc:mysql://") + this.host + ":" + this.port + "/" + this.database);
+        config.setUsername(this.username);
+        config.setPassword(this.password);
+        config.addDataSourceProperty("autoReconnect", "true");
+        this.dataSource = new HikariDataSource(config);
+        LOGGER.info("MySQL(HirakiEngine) Server connected with driver: §a" + (mariadb ? "MariaDB" : "MySQL"));
+    }
+
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return this.dataSource.getConnection();
+    }
+
+    @Override
     public void close() {
         if (isConnected()) {
             this.dataSource.close();
