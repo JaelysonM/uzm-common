@@ -81,13 +81,8 @@ public abstract class UzmLoader {
             List<Class<?>> classList = JavaReflections.getClasses(this.commandsPath, this.getUzmPlugin());
             classList.parallelStream().forEach(c -> {
                 try {
-                    CommandHandler commandHandler = (CommandHandler) c.newInstance();
-                    if (commandHandler.getCommands() != null) {
-                        for (String aliase : commandHandler.getCommands()) {
-                            this.uzmPlugin.getCommand(aliase).setExecutor(commandHandler);
-                        }
-                        counter.incrementAndGet();
-                    }
+                    c.newInstance();
+                    counter.incrementAndGet();
 
                 } catch (Exception e) {
                     System.err.println("[UzmLoader | Commands] Probally An error occurred while trying to register some commands");
