@@ -12,7 +12,7 @@ public class CooldownController {
     private HashMap<String, Long> cooldowns = new HashMap<>();
 
     public void createCooldown(String key, int seconds) {
-        this.cooldowns.put(key, TimeUnit.SECONDS.toMillis(seconds));
+        this.cooldowns.put(key, System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(seconds));
     }
 
     public void deleteCooldown(String key) {

@@ -112,7 +112,6 @@ public class AcceptableInventory extends PlayerMenu implements Listener {
 
                 ItemStack item = event.getCurrentItem();
                 if (item != null && item.getType() != Material.AIR) {
-                    System.out.println(event.getEventName());
                     if (item.isSimilar(ACCEPT_ITEM)) {
                         this.accept.accept(this.player);
                         this.player.closeInventory();
