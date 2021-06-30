@@ -51,7 +51,6 @@ public class AcceptableInventory extends PlayerMenu implements Listener {
 
         this.iconCore = iconCore;
 
-        Bukkit.getServer().getPluginManager().registerEvents(this, Common.getInstance());
 
         this.setupInventory();
     }
@@ -88,17 +87,19 @@ public class AcceptableInventory extends PlayerMenu implements Listener {
                     .amount(this.maxAwayTime - offTime.get()).build());
             if (offTime.incrementAndGet() >= this.maxAwayTime) {
                 accept.accept(this.player);
+                this.player.closeInventory();
                 if (this.scheduleTask != null)
                     this.scheduleTask.cancel();
                 HandlerList.unregisterAll(AcceptableInventory.this);
             } else {
-                if (offTime.get() >= 1 && offTime.get() <= 5) {
+                if ((this.maxAwayTime - offTime.get()) >= 1 && (this.maxAwayTime - offTime.get()) <= 5) {
                     if (this.getInventory().getViewers().contains(this.player))
                         this.player.playSound(this.player.getLocation(), Sound.CLICK, 1, 1);
                 }
             }
         }, 0, 20);
         this.open(this.player);
+        Bukkit.getServer().getPluginManager().registerEvents(this, Common.getInstance());
         return this;
     }
 
@@ -111,10 +112,13 @@ public class AcceptableInventory extends PlayerMenu implements Listener {
 
                 ItemStack item = event.getCurrentItem();
                 if (item != null && item.getType() != Material.AIR) {
-                    if (item == ACCEPT_ITEM) {
+                    System.out.println(event.getEventName());
+                    if (item.isSimilar(ACCEPT_ITEM)) {
                         this.accept.accept(this.player);
-                    } else if (item == DECLINE_ITEM) {
+                        this.player.closeInventory();
+                    } else if (item.isSimilar(DECLINE_ITEM)) {
                         this.decline.accept(this.player);
+                        this.player.closeInventory();
                     }
                 }
             }
