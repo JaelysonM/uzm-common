@@ -1,16 +1,17 @@
 package com.uzm.common.libraries.scoreboard.animations;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.bukkit.ChatColor;
 
+import javax.security.auth.Destroyable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Getter
-@Setter
-public class Scroller {
+@Data
+@AllArgsConstructor
+public class Scroller implements Destroyable {
 
     private int frame;
     private int maxFrames;
@@ -23,6 +24,8 @@ public class Scroller {
     private String sliderColor;
     private String finalColor;
 
+    private boolean dynamic = true;
+    private boolean dynamicController = true;
 
     public Scroller(String title, String firstColor, String sliderColor, String finalColor, boolean bold, ScrollType scrollType, String... restFrames) {
         this.text = title;
@@ -34,45 +37,37 @@ public class Scroller {
         this.scrollType = scrollType;
         this.restFrames = new ArrayList<>(Arrays.asList(restFrames));
 
-        this.frame = scrollType == ScrollType.FORWARD ? 0 : stripedText.length() + restFrames.length;
+        this.frame = scrollType == ScrollType.FORWARD ? 0 : (stripedText.length() + restFrames.length - 1);
+        if (this.scrollType == ScrollType.DYNAMIC) dynamic = true;
         this.maxFrames = stripedText.length() + restFrames.length;
     }
 
     public String next() {
-        if (this.scrollType == ScrollType.FORWARD) {
-            if (this.frame <= this.maxFrames) {
-                StringBuilder sb = new StringBuilder();
-                // String composeText = text;
-                if (this.frame < this.stripedText.length()) {
-                    if (this.frame == 0) {
-                        sb.append(this.sliderColor).append(this.stripedText.substring(0, 0)).append(this.firstColor).append(this.stripedText.substring(1, this.stripedText.length()));
-                    } else {
-                        if (frame == 2) {
-                            System.out.println(this.stripedText.substring(0, this.frame - 1));
-                            System.out.println(this.stripedText.split("")[frame]);
-                            System.out.println(this.stripedText.substring(frame + 1));
-                        }
 
-                        sb.append(this.finalColor).append(this.stripedText.substring(0, this.frame - 1)).append(this.sliderColor).append(this.stripedText.substring(this.frame, this.frame))
-                                .append(firstColor).append(this.stripedText.substring(this.frame + 1, this.stripedText.length()));
 
-                    }
-                }
-                this.frame += 1;
-                return sb.toString();
-        /*} else {
-          if (!this.restFrames.isEmpty()) {
-            composeText = this.restFrames.get((this.frame - this.stripedText.length()) - 2);
-          }else {
-            composeText = this.finalColor+ this.stripedText;
-          }
-        }*/
-            } else {
-                this.frame = 0;
-                return this.text;
-            }
+        if (this.frame >= 0 && this.frame <= this.maxFrames) {
+            StringBuilder sb = new StringBuilder();
+            if (this.frame < this.stripedText.length())
+                sb.append(this.finalColor).append(this.frame > 0 ? this.stripedText.substring(0, this.frame) : "").append(this.sliderColor)
+                        .append(this.stripedText.charAt(this.frame)).append(this.firstColor).append(this.stripedText.substring(this.frame + 1));
+            else
+                sb.append((this.getScrollType() == ScrollType.FORWARD) ? this.firstColor : this.finalColor).append(this.text);
+
+
+            if (this.getScrollType() == ScrollType.FORWARD) this.frame += 1;
+            else this.frame -= 1;
+            return this.frame >= this.stripedText.length() && this.restFrames.size() > 0 ? restFrames.get(this.frame - this.stripedText.length()) : sb.toString();
         } else {
-            return null;
+
+            ScrollType scrollType = this.getScrollType();
+            if (this.dynamic) {
+                if (this.scrollType == ScrollType.FORWARD) this.setScrollType(ScrollType.BACKWARD);
+                else this.setScrollType(ScrollType.FORWARD);
+            }
+            if (this.getScrollType() == ScrollType.FORWARD)
+                this.frame = 0;
+            else this.frame = this.maxFrames;
+            return ((scrollType == ScrollType.FORWARD) ? this.firstColor : this.finalColor) + this.text;
         }
     }
 
@@ -91,7 +86,8 @@ public class Scroller {
 
     public enum ScrollType {
         FORWARD,
-        BACKWARD
+        BACKWARD,
+        DYNAMIC,
     }
 
 }
