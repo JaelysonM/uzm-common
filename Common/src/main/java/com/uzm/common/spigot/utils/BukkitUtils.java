@@ -3,9 +3,9 @@ package com.uzm.common.spigot.utils;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.uzm.common.reflections.acessors.MethodAccessor;
 import com.uzm.common.reflections.Accessors;
 import com.uzm.common.reflections.acessors.FieldAccessor;
+import com.uzm.common.reflections.acessors.MethodAccessor;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.Color;
@@ -250,6 +250,20 @@ public class BukkitUtils {
         double dy = to.getY() - from.getY();
         double dz = to.getZ() - from.getZ();
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    /**
+     * Retorna um item indestrutível.
+     *
+     * @param itemStack O item a ser colocado com indestrutível
+     * @return O {@link ItemStack} retorna um item indestrutível.
+     */
+
+    public static ItemStack unbreakableItem(ItemStack itemStack) {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.spigot().setUnbreakable(true);
+        itemStack.setItemMeta(meta);
+        return itemStack;
     }
 
 
