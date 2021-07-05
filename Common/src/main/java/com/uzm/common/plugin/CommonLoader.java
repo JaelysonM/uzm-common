@@ -1,8 +1,10 @@
 package com.uzm.common.plugin;
 
 import com.uzm.common.controllers.LagController;
+import com.uzm.common.java.util.Logger;
 import com.uzm.common.libraries.holograms.HologramLibrary;
 import com.uzm.common.libraries.npclib.NPCLibrary;
+
 import com.uzm.common.nms.NMS;
 import com.uzm.common.plugin.abstracts.UzmLoader;
 import com.uzm.common.plugin.abstracts.UzmPlugin;
@@ -12,7 +14,10 @@ import com.uzm.common.spigot.enums.MinecraftVersion;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 
+import java.util.List;
 import java.util.logging.Level;
 
 @Getter(AccessLevel.PUBLIC)
@@ -23,7 +28,10 @@ public class CommonLoader extends UzmLoader {
 
     public CommonLoader(UzmPlugin uzmPlugin, String commandsPath, String listenersPath, String protocolsPath) {
         super(uzmPlugin, commandsPath, listenersPath, protocolsPath);
+
+        Logger.init(this.getUzmPlugin());
     }
+
     @Override
     public void managers() {
         this.lagController = new LagController();
@@ -32,6 +40,7 @@ public class CommonLoader extends UzmLoader {
             this.updater = new Updater(this.getUzmPlugin());
             this.updater.run();
         });
+
 
     }
 

@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 public class Common extends UzmPlugin {
+
     @Getter(AccessLevel.PUBLIC)
     private static UzmPlugin instance;
 
