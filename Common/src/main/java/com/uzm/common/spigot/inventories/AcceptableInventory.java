@@ -2,18 +2,14 @@ package com.uzm.common.spigot.inventories;
 
 import com.uzm.common.plugin.Common;
 import com.uzm.common.spigot.items.ItemBuilder;
-import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -21,11 +17,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
-
-@Getter(AccessLevel.PUBLIC)
+@Getter
 public class AcceptableInventory extends PlayerMenu implements Listener {
 
     protected static final ItemStack ACCEPT_ITEM;
@@ -50,7 +48,6 @@ public class AcceptableInventory extends PlayerMenu implements Listener {
         super(player, "§7Confirmação", 4);
 
         this.iconCore = iconCore;
-
 
         this.setupInventory();
     }
@@ -98,54 +95,31 @@ public class AcceptableInventory extends PlayerMenu implements Listener {
                 }
             }
         }, 0, 20);
-        this.open(this.player);
+        this.open();
         Bukkit.getServer().getPluginManager().registerEvents(this, Common.getInstance());
         return this;
     }
 
-    @EventHandler
-    public void onClick(InventoryClickEvent event) {
-        if (event.getInventory().equals(this.getInventory())) {
-            event.setCancelled(true);
-            if (event.getClickedInventory() != null && event.getClickedInventory().equals(this.getInventory())) {
-                player.updateInventory();
 
-                ItemStack item = event.getCurrentItem();
-                if (item != null && item.getType() != Material.AIR) {
-                    if (item.isSimilar(ACCEPT_ITEM)) {
-                        this.accept.accept(this.player);
-                        this.player.closeInventory();
-                    } else if (item.isSimilar(DECLINE_ITEM)) {
-                        this.decline.accept(this.player);
-                        this.player.closeInventory();
-                    }
-                }
+    @Override
+    public void click(InventoryClickEvent click) {
+        ItemStack item = click.getCurrentItem();
+
+        if (item != null && item.getType() != Material.AIR) {
+            if (item.isSimilar(ACCEPT_ITEM)) {
+                this.accept.accept(this.player);
+                this.player.closeInventory();
+            } else if (item.isSimilar(DECLINE_ITEM)) {
+                this.decline.accept(this.player);
+                this.player.closeInventory();
             }
         }
     }
 
-
     public void cancel() {
         if (this.scheduleTask != null)
             this.scheduleTask.cancel();
-        HandlerList.unregisterAll(this);
+        super.cancel();
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent evt) {
-        if (evt.getPlayer().equals(this.player)) {
-            this.cancel();
-        }
-    }
-
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent evt) {
-        if (evt.getPlayer().equals(this.player) && evt.getInventory().equals(this.getInventory())) {
-            this.cancel();
-        }
-    }
-
-    public void open(Player player) {
-        player.openInventory(getInventory());
-    }
 }

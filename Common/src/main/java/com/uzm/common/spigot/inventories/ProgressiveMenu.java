@@ -5,6 +5,7 @@ import com.uzm.common.spigot.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,10 +15,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
-public class ProgressiveMenu {
+public abstract class ProgressiveMenu {
 
     protected String name;
     protected int rows;
@@ -232,6 +236,9 @@ public class ProgressiveMenu {
             return this.posY;
         }
 
-
     }
+
+    public abstract void click(InventoryClickEvent event);
+
+    public abstract void cancel();
 }

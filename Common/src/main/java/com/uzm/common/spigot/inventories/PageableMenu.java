@@ -5,6 +5,7 @@ import com.uzm.common.spigot.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,10 +15,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
-public class PageableMenu {
+public abstract class PageableMenu {
 
     protected String name;
     protected int rows;
@@ -197,4 +201,10 @@ public class PageableMenu {
 
         return menus.get(0);
     }
+
+    public abstract void click(InventoryClickEvent event);
+
+    public abstract void cancel();
+
+
 }

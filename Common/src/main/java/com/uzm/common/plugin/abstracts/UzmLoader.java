@@ -3,8 +3,8 @@ package com.uzm.common.plugin.abstracts;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
-import com.uzm.common.command.CommandHandler;
-import com.uzm.common.java.util.JavaReflections;
+import com.uzm.common.java.util.ReflectionUtils;
+import com.uzm.common.plugin.Common;
 import com.uzm.common.plugin.logger.CustomLogger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -15,8 +15,16 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
 @Getter
 public abstract class UzmLoader {
+
     private UzmPlugin uzmPlugin;
     private PluginManager pluginManager;
     private boolean papiHooked = false;
@@ -49,6 +57,8 @@ public abstract class UzmLoader {
         this.libraries();
         this.managers();
 
+        Common.getUsingCommon().add(uzmPlugin);
+
     }
 
     public abstract void managers();
@@ -60,7 +70,7 @@ public abstract class UzmLoader {
     protected void listeners() {
         CompletableFuture.runAsync(() -> {
             AtomicInteger counter = new AtomicInteger(0);
-            List<Class<?>> classList = JavaReflections.getClasses(this.listenersPath, this.getUzmPlugin());
+            List<Class<?>> classList = ReflectionUtils.getClasses(this.listenersPath, this.getUzmPlugin());
             classList.parallelStream().forEach(l -> {
                 try {
                     this.pluginManager.registerEvents((Listener) l.newInstance(), this.uzmPlugin);
@@ -78,7 +88,7 @@ public abstract class UzmLoader {
     protected void commands() {
         CompletableFuture.runAsync(() -> {
             AtomicInteger counter = new AtomicInteger(0);
-            List<Class<?>> classList = JavaReflections.getClasses(this.commandsPath, this.getUzmPlugin());
+            List<Class<?>> classList = ReflectionUtils.getClasses(this.commandsPath, this.getUzmPlugin());
             classList.parallelStream().forEach(c -> {
                 try {
                     c.newInstance();
@@ -96,7 +106,7 @@ public abstract class UzmLoader {
     protected void protocols() {
         CompletableFuture.runAsync(() -> {
             AtomicInteger counter = new AtomicInteger(0);
-            List<Class<?>> classList = JavaReflections.getClasses(this.protocolsPath, this.getUzmPlugin());
+            List<Class<?>> classList = ReflectionUtils.getClasses(this.protocolsPath, this.getUzmPlugin());
             classList.parallelStream().forEach(c -> {
                 try {
                     ProtocolLibrary.getProtocolManager().addPacketListener((PacketListener) c.newInstance());

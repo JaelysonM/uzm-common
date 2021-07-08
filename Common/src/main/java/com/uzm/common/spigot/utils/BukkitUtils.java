@@ -28,7 +28,10 @@ import java.util.List;
 import java.util.UUID;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
 public class BukkitUtils {

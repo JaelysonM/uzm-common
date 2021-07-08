@@ -12,78 +12,82 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Maxter
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 public abstract class Mojang {
 
-  public abstract String fetchId(String name);
+    public abstract String fetchId(String name);
 
-  public abstract String fetchSkinProperty(String id);
+    public abstract String fetchSkinProperty(String id);
 
-  public abstract boolean getResponse();
+    public abstract boolean getResponse();
 
-  private static final List<Mojang> MOJANGAPIS;
-  private static final Cache<String, String> CACHED_UUID, CACHED_PROPERTY;
+    private static final List<Mojang> MOJANGAPIS;
+    private static final Cache<String, String> CACHED_UUID, CACHED_PROPERTY;
 
-  static {
-    MOJANGAPIS = new ArrayList<>();
-    MOJANGAPIS.add(new MojangAPI());
-    MOJANGAPIS.add(new MineToolsAPI());
+    static {
+        MOJANGAPIS = new ArrayList<>();
+        MOJANGAPIS.add(new MojangAPI());
+        MOJANGAPIS.add(new MineToolsAPI());
 
-    CACHED_UUID = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build();
-    CACHED_PROPERTY = CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.MINUTES).build();
-  }
-
-  public static String getUUID(String name) throws InvalidMojangException {
-    String id = CACHED_UUID.getIfPresent(name);
-    if (id != null) {
-      return id;
+        CACHED_UUID = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.HOURS).build();
+        CACHED_PROPERTY = CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.MINUTES).build();
     }
 
-    for (Mojang api : MOJANGAPIS) {
-      id = api.fetchId(name);
-      if (api.getResponse()) {
+    public static String getUUID(String name) throws InvalidMojangException {
+        String id = CACHED_UUID.getIfPresent(name);
         if (id != null) {
-          CACHED_UUID.put(name, id);
+            return id;
         }
 
-        return id;
-      }
+        for (Mojang api : MOJANGAPIS) {
+            id = api.fetchId(name);
+            if (api.getResponse()) {
+                if (id != null) {
+                    CACHED_UUID.put(name, id);
+                }
+
+                return id;
+            }
+        }
+
+        throw new InvalidMojangException("Nenhuma api conseguiu pegar o UUID pelo nome: " + name);
     }
 
-    throw new InvalidMojangException("Nenhuma api conseguiu pegar o UUID pelo nome: " + name);
-  }
-
-  public static String getSkinProperty(String id) throws InvalidMojangException {
-    if (CACHED_PROPERTY ==null && id ==null) {
-      return null;
-    }
-    String property = CACHED_PROPERTY.getIfPresent(id);
-    if (property != null) {
-      return property;
-    }
-
-    for (Mojang api : MOJANGAPIS) {
-      property = api.fetchSkinProperty(id);
-      if (api.getResponse()) {
+    public static String getSkinProperty(String id) throws InvalidMojangException {
+        if (CACHED_PROPERTY == null && id == null) {
+            return null;
+        }
+        String property = CACHED_PROPERTY.getIfPresent(id);
         if (property != null) {
-          CACHED_PROPERTY.put(id, property);
+            return property;
         }
 
-        return property;
-      }
+        for (Mojang api : MOJANGAPIS) {
+            property = api.fetchSkinProperty(id);
+            if (api.getResponse()) {
+                if (property != null) {
+                    CACHED_PROPERTY.put(id, property);
+                }
+
+                return property;
+            }
+        }
+
+        throw new InvalidMojangException("Nenhuma api conseguiu pegar a Property pelo id: " + id);
     }
 
-    throw new InvalidMojangException("Nenhuma api conseguiu pegar a Property pelo id: " + id);
-  }
+    public static UUID getOfflineUUID(String name) {
+        return UUID.nameUUIDFromBytes(new String("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
+    }
 
-  public static UUID getOfflineUUID(String name) {
-    return UUID.nameUUIDFromBytes(new String("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
-  }
-
-  public static String parseUUID(String withoutDashes) {
-    return withoutDashes.substring(0, 8) + '-' + withoutDashes.substring(8, 12) + '-' + withoutDashes.substring(12, 16) + '-' + withoutDashes.substring(16, 20) + '-'
-        + withoutDashes.substring(20, 32);
-  }
+    public static String parseUUID(String withoutDashes) {
+        return withoutDashes.substring(0, 8) + '-' + withoutDashes.substring(8, 12) + '-' + withoutDashes.substring(12, 16) + '-' + withoutDashes.substring(16, 20) + '-'
+                + withoutDashes.substring(20, 32);
+    }
 
 }

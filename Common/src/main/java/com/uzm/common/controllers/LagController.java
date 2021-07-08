@@ -1,5 +1,17 @@
 package com.uzm.common.controllers;
 
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
+@Getter
+@Setter
 public class LagController implements Runnable {
 
     private int tick;
@@ -25,21 +37,5 @@ public class LagController implements Runnable {
                 lowTps = false;
         }
 
-    }
-
-    public double getLastFinish() {
-        return lastFinish;
-    }
-
-    public int getTick() {
-        return tick;
-    }
-
-    public double getTps() {
-        return tps;
-    }
-
-    public boolean isLowTps() {
-        return lowTps;
     }
 }

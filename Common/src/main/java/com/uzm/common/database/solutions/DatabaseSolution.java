@@ -21,22 +21,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
+@Getter(AccessLevel.MODULE)
+@Setter(AccessLevel.MODULE)
 public abstract class DatabaseSolution extends CacheHandler {
 
 
     public static final CustomLogger LOGGER = ((CustomLogger) Common.getInstance().getLogger()).getModule("DATABASES");
 
-    private @Getter(AccessLevel.MODULE)
-    @Setter(AccessLevel.MODULE)
-    boolean tables;
+    private boolean tables;
 
 
-    private @Getter(AccessLevel.MODULE)
-    @Setter(AccessLevel.MODULE)
-    ExecutorService executorService;
+    private ExecutorService executorService;
 
     @Getter(AccessLevel.PUBLIC)
     private UzmPlugin plugin;

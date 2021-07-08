@@ -32,26 +32,16 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Lightweight packet-based scoreboard API for Bukkit plugins.
- * It can be safely used asynchronously as everything is at packet level.
- * <p>
- * The project is on <a href="https://github.com/MrMicky-FR/FastBoard">GitHub</a>.
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
  *
- * @author MrMicky
- * @version 1.2.0
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 public class AsyncScoreboard {
 
     private static final Map<Class<?>, Field[]> PACKETS = new HashMap<>(8);

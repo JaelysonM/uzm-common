@@ -3,10 +3,12 @@ package com.uzm.common.java.util;
 import org.bukkit.Location;
 
 /**
- * Classe com utilitários diversos sem nicho predefinido.
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
  *
- * @author Maxter
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 public class MathUtils {
 
     public static float clampYaw(float yaw) {

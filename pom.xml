@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
     <groupId>com.uzm</groupId>
     <artifactId>uzm-common-modules</artifactId>
-    <version>2.0.4</version>
+    <version>2.0.5</version>
 
     <properties>
         <COMMON.NAME>uzm-common</COMMON.NAME>
@@ -24,8 +24,20 @@
     </modules>
     <repositories>
         <repository>
+            <id>nms-repo</id>
+            <url>https://repo.codemc.org/repository/nms/</url>
+        </repository>
+        <repository>
+            <id>bs-repo</id>
+            <url>https://ci.pluginwiki.us/plugin/repository/everything/</url>
+        </repository>
+        <repository>
             <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/repository/public/</url>
+            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+        </repository>
+        <repository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -46,12 +58,6 @@
             <artifactId>HikariCP</artifactId>
             <version>3.4.5</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>${protocollib.version}</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

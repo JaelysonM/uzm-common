@@ -1,7 +1,6 @@
 package com.uzm.common.plugin.updater;
 
 import com.uzm.common.plugin.abstracts.UzmPlugin;
-import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.json.simple.JSONObject;
@@ -13,12 +12,16 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author JotaMPê
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
+@Getter
 public class Updater {
 
     private UzmPlugin plugin;
-    @Getter(AccessLevel.PUBLIC)
     private String lastestName;
 
 
@@ -28,30 +31,28 @@ public class Updater {
 
     public void run() {
 
-        Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §7Looking for new updates...");
+        Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §7Looking for new updates...");
 
         JSONObject json = getVersion();
         String latest = json.get("version").toString();
         String current = this.plugin.getDescription().getVersion();
         if (latest == null) {
-            Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §cThe connection with GoogleDrive api can't be estabilished.");
+            Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §cThe connection with GoogleDrive api can't be estabilished.");
         } else {
 
             if (latest.equals(current)) {
-                Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §7No updates found!");
+                Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §7No updates found!");
 
             } else {
-                Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §aNew version found:");
-                Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §c" + current + " to §a" + latest);
-                Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §7Prepare to update and download file...");
+                Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §aNew version found:");
+                Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §c" + current + " to §a" + latest);
+                Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §7Prepare to update and download file...");
                 downloadUpdate(json.get("download").toString(), latest);
-
-
             }
         }
     }
 
-    public void downloadUpdate(String url, String latest) {
+    protected void downloadUpdate(String url, String latest) {
         try {
             String versionExtractor = latest.replace(" build (", "-").replace(")", "");
             File file = new File("plugins/" + this.plugin.getName() + "/update", this.plugin.getName() + ".jar");
@@ -69,20 +70,20 @@ public class Updater {
             BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
 
             int oneChar;
-            Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §7File size: §b" + (max / 1024) + "kb");
+            Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §7File size: §b" + (max / 1024) + "kb");
 
             while ((oneChar = in.read()) != -1) {
                 bout.write(oneChar);
             }
-            Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §fDownload finished, when the server restarts, the plugin will be update automatically.");
+            Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §fDownload finished, when the server restarts, the plugin will be update automatically.");
             in.close();
             bout.close();
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage("§6[uzm.commons | Updater] §cDownload failed -" + ex.getMessage());
+            Bukkit.getConsoleSender().sendMessage("§6[uzm-common] Updater: §cDownload failed -" + ex.getMessage());
         }
     }
 
-    private static JSONObject getVersion() {
+    protected static JSONObject getVersion() {
         try {
             HttpsURLConnection connection = (HttpsURLConnection) new URL("https://drive.google.com/uc?id=1FE_2t3r9yg4WwTJ5uoqDIAcTnVCQAyjq&export=download").openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");

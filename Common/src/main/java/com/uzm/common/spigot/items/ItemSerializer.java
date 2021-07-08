@@ -6,7 +6,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
 public class ItemSerializer {
@@ -37,7 +40,7 @@ public class ItemSerializer {
             }
             if (toSerialize.getItemMeta().hasEnchants()) {
                 for (Map.Entry<Enchantment, Integer> e : toSerialize.getItemMeta().getEnchants().entrySet()) {
-                    sb.append(" : enchant=").append(((Enchantment) e.getKey()).getName().toUpperCase()).append(":").append(e.getValue());
+                    sb.append(" : enchant=").append(e.getKey().getName().toUpperCase()).append(":").append(e.getValue());
                 }
             }
         }

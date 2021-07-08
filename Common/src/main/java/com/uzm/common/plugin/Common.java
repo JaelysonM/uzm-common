@@ -9,8 +9,11 @@ import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.LinkedList;
 
 public class Common extends UzmPlugin {
+    @Getter
+    private static LinkedList<UzmPlugin> usingCommon = new LinkedList<>();
 
     @Getter(AccessLevel.PUBLIC)
     private static UzmPlugin instance;

@@ -7,6 +7,13 @@ import org.bukkit.command.SimpleCommandMap;
 
 import java.util.List;
 
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
 public abstract class CommandHandler extends Command {
 
 
@@ -20,7 +27,6 @@ public abstract class CommandHandler extends Command {
 
         }
     }
-
 
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] strings) {

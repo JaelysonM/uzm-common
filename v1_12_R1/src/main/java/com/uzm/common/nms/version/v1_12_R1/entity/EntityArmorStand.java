@@ -34,7 +34,7 @@ public class EntityArmorStand extends net.minecraft.server.v1_12_R1.EntityArmorS
         setBasePlate(true);
         this.line = line;
         try {
-            Field field = net.minecraft.server.v1_12_R1.EntityArmorStand.class.getDeclaredField("bi");
+            Field field = net.minecraft.server.v1_12_R1.EntityArmorStand.class.getDeclaredField("bB");
             field.setAccessible(true);
             field.set(this, 2147483647);
         } catch (Exception ex) {

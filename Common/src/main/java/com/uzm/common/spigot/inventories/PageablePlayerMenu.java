@@ -12,7 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
 public abstract class PageablePlayerMenu extends PageableMenu implements Listener {
@@ -58,9 +61,6 @@ public abstract class PageablePlayerMenu extends PageableMenu implements Listene
         player.openInventory(this.menus.get(this.currentPage - 1).getInventory());
     }
 
-    public abstract void click(InventoryClickEvent event);
-
-    public abstract void cancel();
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
@@ -72,7 +72,6 @@ public abstract class PageablePlayerMenu extends PageableMenu implements Listene
                 ItemStack item = event.getCurrentItem();
                 if (item != null && item.getType() != Material.AIR) {
                     this.click(event);
-
                 }
             }
         }

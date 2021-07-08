@@ -4,7 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
 public class LocationSerializer {

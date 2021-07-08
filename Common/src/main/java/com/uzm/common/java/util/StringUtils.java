@@ -10,10 +10,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Classe com utilitários relacionado a {@link String}.
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
  *
- * @author Maxter & JotaMPê
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 public class StringUtils {
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###");

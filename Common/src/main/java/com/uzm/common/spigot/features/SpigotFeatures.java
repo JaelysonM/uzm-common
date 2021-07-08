@@ -4,8 +4,12 @@ import com.uzm.common.nms.NMS;
 import org.bukkit.entity.Player;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 
 public class SpigotFeatures {
 
@@ -25,6 +29,5 @@ public class SpigotFeatures {
 
 
     }
-
 
 }

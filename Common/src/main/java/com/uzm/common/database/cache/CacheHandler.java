@@ -9,9 +9,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
 @Getter
 @Setter
-@ToString(includeFieldNames = true)
+@ToString()
 @AllArgsConstructor
 @Data(staticConstructor = "of")
 public abstract class CacheHandler {
@@ -65,8 +72,11 @@ public abstract class CacheHandler {
         CACHE.get(containerClass).remove(key);
     }
 
+
     /**
-     * Clear a cache contexto from {@param containerClass} .
+     * Clear the cache from {@param containerClass} context cache.
+     *
+     * @param containerClass Extended container class
      */
 
     public static <T extends CacheHandler> void clear(@NonNull Class<T> containerClass) {
@@ -92,6 +102,7 @@ public abstract class CacheHandler {
         return (Collection<T>) ImmutableList.copyOf(CACHE.get(containerClass).values());
     }
 
-
+    @Getter
     private static Map<Class<? extends CacheHandler>, Map<String, CacheHandler>> CACHE = new HashMap<>();
+
 }

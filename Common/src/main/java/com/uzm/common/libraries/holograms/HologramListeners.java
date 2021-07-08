@@ -20,131 +20,135 @@ import java.util.Collection;
 
 
 /**
- * @author Maxter
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 public class HologramListeners implements Listener {
 
-  private Plugin plugin;
-  private final ListMultimap<ChunkCoord, Hologram> toRespawn = ArrayListMultimap.create();
+    private Plugin plugin;
+    private final ListMultimap<ChunkCoord, Hologram> toRespawn = ArrayListMultimap.create();
 
-  public HologramListeners() {
-    this.plugin = HologramLibrary.getPlugin();
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR)
-  public void onPluginDisable(PluginDisableEvent evt) {
-    if (this.plugin.equals(evt.getPlugin())) {
-      HologramLibrary.unregisterAll();
+    public HologramListeners() {
+        this.plugin = HologramLibrary.getPlugin();
     }
-  }
 
-  @EventHandler(ignoreCancelled = true)
-  public void onWorlLoad(WorldLoadEvent evt) {
-    for (ChunkCoord coord : ImmutableList.copyOf(toRespawn.keys())) {
-      if (coord.world.equals(evt.getWorld().getName()) && evt.getWorld().isChunkLoaded(coord.x, coord.z)) {
-        respawnAllFromCoord(coord);
-      }
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPluginDisable(PluginDisableEvent evt) {
+        if (this.plugin.equals(evt.getPlugin())) {
+            HologramLibrary.unregisterAll();
+        }
     }
-  }
 
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void onWorldUnload(WorldUnloadEvent evt) {
-    for (Hologram hologram : HologramLibrary.listHolograms()) {
-      if (hologram != null && hologram.isSpawned() && hologram.getLocation().getWorld().equals(evt.getWorld())) {
-        if (evt.isCancelled()) {
-          for (ChunkCoord coord : ImmutableList.copyOf(toRespawn.keys())) {
-            if (coord.world.equals(evt.getWorld().getName())) {
-              respawnAllFromCoord(coord);
+    @EventHandler(ignoreCancelled = true)
+    public void onWorlLoad(WorldLoadEvent evt) {
+        for (ChunkCoord coord : ImmutableList.copyOf(toRespawn.keys())) {
+            if (coord.world.equals(evt.getWorld().getName()) && evt.getWorld().isChunkLoaded(coord.x, coord.z)) {
+                respawnAllFromCoord(coord);
             }
-          }
-          return;
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onWorldUnload(WorldUnloadEvent evt) {
+        for (Hologram hologram : HologramLibrary.listHolograms()) {
+            if (hologram != null && hologram.isSpawned() && hologram.getLocation().getWorld().equals(evt.getWorld())) {
+                if (evt.isCancelled()) {
+                    for (ChunkCoord coord : ImmutableList.copyOf(toRespawn.keys())) {
+                        if (coord.world.equals(evt.getWorld().getName())) {
+                            respawnAllFromCoord(coord);
+                        }
+                    }
+                    return;
+                }
+
+                hologram.despawn();
+                storeForRespawn(hologram);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onChunkLoad(ChunkLoadEvent evt) {
+        respawnAllFromCoord(toCoord(evt.getChunk()));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onChunkUnload(ChunkUnloadEvent evt) {
+        ChunkCoord coord = toCoord(evt.getChunk());
+        Location location = new Location(null, 0, 0, 0);
+        for (Hologram hologram : HologramLibrary.listHolograms()) {
+            if (hologram != null && hologram.isSpawned()) {
+                location = hologram.getLocation().clone();
+
+                if (toCoord(location).equals(coord)) {
+                    hologram.spawn();
+                    if (hologram.isSpawned()) {
+                        evt.setCancelled(true);
+                        respawnAllFromCoord(coord);
+                        return;
+                    }
+
+                    this.toRespawn.put(coord, hologram);
+                }
+            }
+        }
+    }
+
+    private void respawnAllFromCoord(ChunkCoord coord) {
+        Collection<Hologram> holograms = toRespawn.asMap().remove(coord);
+        if (holograms != null) {
+            holograms.stream().filter(Hologram::isSpawned).forEach(Hologram::spawn);
+        }
+    }
+
+    private void storeForRespawn(Hologram hologram) {
+        toRespawn.put(toCoord(hologram.getLocation()), hologram);
+    }
+
+    private ChunkCoord toCoord(Chunk chunk) {
+        return new ChunkCoord(chunk);
+    }
+
+    private ChunkCoord toCoord(Location location) {
+        return new ChunkCoord(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
+    }
+
+    private static class ChunkCoord {
+
+        private String world;
+        private int x, z;
+
+        private ChunkCoord(Chunk chunk) {
+            this(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
         }
 
-        hologram.despawn();
-        storeForRespawn(hologram);
-      }
-    }
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void onChunkLoad(ChunkLoadEvent evt) {
-    respawnAllFromCoord(toCoord(evt.getChunk()));
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void onChunkUnload(ChunkUnloadEvent evt) {
-    ChunkCoord coord = toCoord(evt.getChunk());
-    Location location = new Location(null, 0, 0, 0);
-    for (Hologram hologram : HologramLibrary.listHolograms()) {
-      if (hologram != null && hologram.isSpawned()) {
-        location = hologram.getLocation().clone();
-
-        if (toCoord(location).equals(coord)) {
-          hologram.spawn();
-          if (hologram.isSpawned()) {
-            evt.setCancelled(true);
-            respawnAllFromCoord(coord);
-            return;
-          }
-
-          this.toRespawn.put(coord, hologram);
+        private ChunkCoord(String world, int x, int z) {
+            this.world = world;
+            this.x = x;
+            this.z = z;
         }
-      }
-    }
-  }
 
-  private void respawnAllFromCoord(ChunkCoord coord) {
-    Collection<Hologram> holograms = toRespawn.asMap().remove(coord);
-    if (holograms != null) {
-      holograms.stream().filter(Hologram::isSpawned).forEach(Hologram::spawn);
-    }
-  }
+        public boolean equals(Object obj) {
+            if (!(obj instanceof ChunkCoord)) {
+                return false;
+            }
+            if (this == obj) {
+                return true;
+            }
 
-  private void storeForRespawn(Hologram hologram) {
-    toRespawn.put(toCoord(hologram.getLocation()), hologram);
-  }
+            ChunkCoord other = (ChunkCoord) obj;
+            if (world == null) {
+                if (other.world != null) {
+                    return false;
+                }
+            } else if (!world.equals(other.world)) {
+                return false;
+            }
 
-  private ChunkCoord toCoord(Chunk chunk) {
-    return new ChunkCoord(chunk);
-  }
-
-  private ChunkCoord toCoord(Location location) {
-    return new ChunkCoord(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
-  }
-
-  private static class ChunkCoord {
-
-    private String world;
-    private int x, z;
-
-    private ChunkCoord(Chunk chunk) {
-      this(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
-    }
-
-    private ChunkCoord(String world, int x, int z) {
-      this.world = world;
-      this.x = x;
-      this.z = z;
-    }
-
-    public boolean equals(Object obj) {
-      if (!(obj instanceof ChunkCoord)) {
-        return false;
-      }
-      if (this == obj) {
-        return true;
-      }
-
-      ChunkCoord other = (ChunkCoord) obj;
-      if (world == null) {
-        if (other.world != null) {
-          return false;
+            return this.x == other.x && this.z == other.z;
         }
-      } else if (!world.equals(other.world)) {
-        return false;
-      }
-
-      return this.x == other.x && this.z == other.z;
     }
-  }
 }

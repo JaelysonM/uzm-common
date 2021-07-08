@@ -16,6 +16,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
 @Getter
 public class ConfigurationCreator {
 
@@ -155,6 +162,10 @@ public class ConfigurationCreator {
         }
 
         return cache.get(path + name.toLowerCase() + " in " + plugin.getName());
+    }
+
+    public static ConfigurationCreator getConfig(JavaPlugin plugin, String name) {
+        return getConfig(plugin, "", name);
     }
 
     public static HashMap<String, ConfigurationCreator> cache = Maps.newHashMap();

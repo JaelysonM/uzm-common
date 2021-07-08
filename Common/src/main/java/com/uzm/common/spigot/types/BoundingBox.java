@@ -1,5 +1,7 @@
 package com.uzm.common.spigot.types;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -10,37 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
+@Getter
+@Setter
 public final class BoundingBox {
 
     private double minX, minY, minZ;
     private double maxX, maxY, maxZ;
 
-    public double getMaxX() {
-        return maxX;
-    }
-
-    public double getMaxY() {
-        return maxY;
-    }
-
-    public double getMaxZ() {
-        return maxZ;
-    }
-
-    public double getMinX() {
-        return minX;
-    }
-
-    public double getMinY() {
-        return minY;
-    }
-
-    public double getMinZ() {
-        return minZ;
-    }
 
     public BoundingBox(final double minX, final double maxX, final double minY, final double maxY, final double minZ, final double maxZ) {
         if (minX < maxX) {

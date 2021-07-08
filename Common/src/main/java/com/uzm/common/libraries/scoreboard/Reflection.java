@@ -34,10 +34,12 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * Small reflection utility class to use CraftBukkit and NMS.
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
  *
- * @author MrMicky
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 public final class Reflection {
 
     private static final String NM_PACKAGE = "net.minecraft";

@@ -10,8 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Maxter & JotaMPê
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 public class DataContainer {
 
     private Object value;
@@ -28,7 +32,8 @@ public class DataContainer {
         this.containerMap = null;
     }
 
-    public void save() {}
+    public void save() {
+    }
 
     public void set(Object value) {
         if (this.value == null || !this.value.equals(value)) {
@@ -110,6 +115,7 @@ public class DataContainer {
     }
 
     private Map<Class<? extends AbstractContainer>, AbstractContainer> containerMap = new HashMap<>();
+
     @SuppressWarnings("unchecked")
     public <T extends AbstractContainer> T getContainer(Class<T> containerClass) {
         if (!this.containerMap.containsKey(containerClass)) {

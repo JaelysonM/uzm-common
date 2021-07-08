@@ -17,8 +17,12 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 public class MySQLDatabase extends DatabaseSolution {
 
     private String host, port, database, username, password;

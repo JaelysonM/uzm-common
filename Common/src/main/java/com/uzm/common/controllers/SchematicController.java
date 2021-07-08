@@ -1,5 +1,7 @@
 package com.uzm.common.controllers;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -14,41 +16,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
+@Data
+@AllArgsConstructor
 public class SchematicController {
+
     private short[] blocks;
     private byte[] data;
     private short width;
     private short lenght;
     private short height;
-
-
-    public SchematicController(short[] blocks, byte[] data, short width, short lenght, short height) {
-        this.blocks = blocks;
-        this.data = data;
-        this.width = width;
-        this.lenght = lenght;
-        this.height = height;
-    }
-
-    public short[] getBlocks() {
-        return this.blocks;
-    }
-
-    public byte[] getData() {
-        return this.data;
-    }
-
-    public short getWidth() {
-        return this.width;
-    }
-
-    public short getLenght() {
-        return this.lenght;
-    }
-
-    public short getHeight() {
-        return this.height;
-    }
 
     public List<Block> build(Location location) {
         List<Block> buildBlocks = new LinkedList<>();

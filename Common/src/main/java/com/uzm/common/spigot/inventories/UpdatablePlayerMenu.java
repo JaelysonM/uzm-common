@@ -11,7 +11,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
 public abstract class UpdatablePlayerMenu extends UpdatableMenu implements Listener {
@@ -50,7 +53,6 @@ public abstract class UpdatablePlayerMenu extends UpdatableMenu implements Liste
                 ItemStack item = event.getCurrentItem();
                 if (item != null && item.getType() != Material.AIR) {
                     this.click(event);
-
                 }
             }
         }

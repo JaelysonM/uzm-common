@@ -8,6 +8,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
 public class Utf8YamlConfiguration extends YamlConfiguration {
 
     @Override

@@ -1,5 +1,7 @@
 package com.uzm.common.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,8 +13,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import static java.lang.Integer.parseInt;
 
 /**
+ * A complete and updatable plugin for any usages.
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
+@Getter
+@Setter
 public class CubeId {
     private String world;
     private int xmax, xmin, ymax, ymin, zmax, zmin;
@@ -46,17 +54,6 @@ public class CubeId {
         this.location2 = new Location(Bukkit.getWorld(split[0]), xmin, ymin, zmin);
     }
 
-    public Location getLocation1() {
-        return location1;
-    }
-
-    public Location getLocation2() {
-        return location2;
-    }
-
-    public CubeIterator iterator() {
-        return new CubeIterator(this);
-    }
 
     public Location getRandomLocation() {
         int x = ThreadLocalRandom.current().nextInt(xmax - xmin) + 1;
@@ -77,42 +74,12 @@ public class CubeId {
                 && loc.getBlockZ() >= zmin && loc.getBlockZ() <= zmax;
     }
 
-    public String getWorld() {
-        return world;
-    }
-
-    public int getXmin() {
-        return xmin;
-    }
-
-    public int getXmax() {
-        return xmax;
-    }
 
     @Override
     public String toString() {
         return world + "; " + xmax + "; " + xmin + "; " + ymax + "; " + ymin + "; " + zmax + "; " + zmin;
     }
 
-    public void setXmin(int xmin) {
-        this.xmin = xmin;
-    }
-
-    public int getYmax() {
-        return ymax;
-    }
-
-    public int getYmin() {
-        return ymin;
-    }
-
-    public int getZmax() {
-        return zmax;
-    }
-
-    public int getZmin() {
-        return zmin;
-    }
 
     public class CubeIterator implements Iterator<Block> {
         String world;
@@ -146,10 +113,6 @@ public class CubeId {
             }
 
             return block;
-        }
-
-        public void remove() {
-            // Do anything
         }
     }
 }

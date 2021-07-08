@@ -1,6 +1,6 @@
 package com.uzm.common.nms.version.v1_12_R1.utils;
 
-import com.uzm.common.java.util.JavaReflections;
+import com.uzm.common.java.util.ReflectionUtils;
 import com.uzm.common.nms.interfaces.ISkinFactory;
 import com.uzm.common.plugin.Common;
 import net.minecraft.server.v1_12_R1.*;
@@ -15,11 +15,11 @@ public class SkinFactory implements ISkinFactory {
     @Override
     public void applySkin(Player p, Object props) {
         try {
-            Object ep = JavaReflections.invokeMethod(p.getClass(), p, "getHandle");
-            Object profile = JavaReflections.invokeMethod(ep.getClass(), ep, "getProfile");
-            Object propmap = JavaReflections.invokeMethod(profile.getClass(), profile, "getProperties");
-            JavaReflections.invokeMethod(propmap, "clear");
-            JavaReflections.invokeMethod(propmap.getClass(), propmap, "put", new Class[]{Object.class, Object.class}, "textures", props);
+            Object ep = ReflectionUtils.invokeMethod(p.getClass(), p, "getHandle");
+            Object profile = ReflectionUtils.invokeMethod(ep.getClass(), ep, "getProfile");
+            Object propmap = ReflectionUtils.invokeMethod(profile.getClass(), profile, "getProperties");
+            ReflectionUtils.invokeMethod(propmap, "clear");
+            ReflectionUtils.invokeMethod(propmap.getClass(), propmap, "put", new Class[]{Object.class, Object.class}, "textures", props);
         } catch (Exception e) {
             e.printStackTrace();
         }

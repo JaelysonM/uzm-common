@@ -9,6 +9,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A complete and updatable plugin for any usages.
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
 @Data
 @AllArgsConstructor
 public class Scroller implements Destroyable {

@@ -8,10 +8,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
 public class TimeUtils {
 
     private static List<String> TIME_UNITS;
-
 
     static {
         TIME_UNITS = Arrays.stream(TimeUnit.values()).map(name -> name.name().toUpperCase()).collect(Collectors.toList());
@@ -61,14 +67,12 @@ public class TimeUtils {
             sb.append(months).append(months == 1 ? " mês " : " meses ");
             ms -= months * 2620800;
         }
-	    	/*
-	    	if(ms/604800>0){
-	    		long weeks=ms/604800;
-	    		sb.append(weeks).append(weeks == 1 ? " semana " : " semanas ");
-	    		ms-=weeks*604800;
-	    	}
 
-	    	 */
+        if (ms / 604800 > 0) {
+            long weeks = ms / 604800;
+            sb.append(weeks).append(weeks == 1 ? " semana " : " semanas ");
+            ms -= weeks * 604800;
+        }
         if (ms / 86400 > 0) {
             long days = ms / 86400;
             sb.append(days).append(days == 1 ? " dia " : " dias ");
@@ -90,7 +94,7 @@ public class TimeUtils {
         if (sb.length() > 1) {
             sb.replace(sb.length() - 1, sb.length(), "");
         } else {
-            sb = new StringBuilder("Acabado");
+            sb = new StringBuilder("...");
         }
 
         return sb.toString();

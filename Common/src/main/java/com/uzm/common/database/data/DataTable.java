@@ -2,7 +2,6 @@ package com.uzm.common.database.data;
 
 import com.uzm.common.database.data.interfaces.DataTableInfo;
 import com.uzm.common.database.solutions.DatabaseSolution;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,14 +11,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Maxter
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 @AllArgsConstructor
+@Getter
 public abstract class DataTable {
 
-    @Getter(AccessLevel.PUBLIC)
     private final DatabaseSolution databaseSolution;
-
 
     public abstract void init();
 
@@ -30,7 +32,6 @@ public abstract class DataTable {
     }
 
     private static final List<DataTable> TABLES = new ArrayList<>();
-
 
     public static void registerTable(DataTable table) {
         TABLES.add(table);

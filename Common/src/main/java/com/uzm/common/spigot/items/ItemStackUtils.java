@@ -6,10 +6,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
 public class ItemStackUtils {
+
     public static int getAmountOfItem(Material material, Location location) {
         return getAmountOfItem(material, location, 1);
     }

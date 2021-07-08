@@ -12,7 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
 public abstract class ProgressivePlayerMenu extends ProgressiveMenu implements Listener {
@@ -58,9 +61,6 @@ public abstract class ProgressivePlayerMenu extends ProgressiveMenu implements L
         player.openInventory(this.menus.get(this.currentPage - 1).getInventory());
     }
 
-    public abstract void click(InventoryClickEvent event);
-
-    public abstract void cancel();
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {

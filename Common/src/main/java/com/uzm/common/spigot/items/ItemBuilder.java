@@ -20,8 +20,12 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
+
 
 public class ItemBuilder {
     private ItemStack item;
@@ -40,9 +44,8 @@ public class ItemBuilder {
     }
 
     public ItemBuilder(String item) {
-        if (item == null || item.isEmpty()) {
+        if (item == null || item.isEmpty())
             this.item = null;
-        }
 
         try {
             item = ChatColor.translateAlternateColorCodes('&', item.replace("\\n", "\n"));

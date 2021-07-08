@@ -21,10 +21,11 @@ Download the latest version!
 Some usages
 ------
 
-The `CacheHandler` class is a handler to facilitate the creation of cache containers.
-Below is a practical use of this handler:
+The `CacheHandler` class is a handler to facilitate the creation of cache containers. Below is a practical use of this
+handler:
 
 #### [`CacheHandler`](https://github.com/JaelysonM/uzm-common/blob/5d11deb5b6999460beab13c5550be96d888fff40/Common/src/main/java/com/uzm/common/containers/cache/CacheHandler.java)
+
 ```java                                             
 public class ExampleContainer extends CacheHandler {
     private String exampleString = "Example";
@@ -61,11 +62,12 @@ public class ExampleContainer extends CacheHandler {
 }   
 ```
 
-The `PlayerCacheHandler` class is extension from `CacheHandler`, which facilitate the creation of player cache containers.
-This handler already contains the `getPlayer()` and `getUuid()` methods.
-Below is a practical use of this handler:
+The `PlayerCacheHandler` class is extension from `CacheHandler`, which facilitate the creation of player cache
+containers. This handler already contains the `getPlayer()` and `getUuid()` methods. Below is a practical use of this
+handler:
 
 #### [`PlayerCacheHandler`](https://github.com/JaelysonM/uzm-common/blob/5d11deb5b6999460beab13c5550be96d888fff40/Common/src/main/java/com/uzm/common/containers/cache/PlayerCacheHandler.java)
+
 ```java                                             
 public class PlayerExampleContainer extends PlayerCacheHandler {
     private String exampleString = "Example";
@@ -103,45 +105,47 @@ public class PlayerExampleContainer extends PlayerCacheHandler {
 }
 ```
 
-The `PlayerCacheHandler` and `CacheHandler` classes have built-in methods, which are `getCache()`, `collections()` and `destroy()`
+The `PlayerCacheHandler` and `CacheHandler` classes have built-in methods, which are `getCache()`, `collections()`
+and `destroy()`
 
 Now let's see the use of each one
 
 #### `getCache(String, Class<T>, Object...)`
 
-This method has two bears, if there was a record in the cache with the `String`, it will return a `CompletebleFuture<T>` from the container of `Class<T>`.
+This method has two bears, if there was a record in the cache with the `String`, it will return a `CompletebleFuture<T>`
+from the container of `Class<T>`.
 
 ```java
 
-   ExampleContainer container = CacheHandler.getCache("exampleUniqueKey", ExampleContainer.class).join();
-   
-   System.out.println(container.getSomething());
-   
-   // or...
-   
-   PlayerExampleContainer container = PlayerCacheHandler.getCache("exampleUniqueKey", PlayerExampleContainer.class).join();
-   
-   container.getPlayer().sendMessage("Hello");
+ExampleContainer container=CacheHandler.getCache("exampleUniqueKey",ExampleContainer.class).join();
+
+        System.out.println(container.getSomething());
+
+        // or...
+
+        PlayerExampleContainer container=PlayerCacheHandler.getCache("exampleUniqueKey",PlayerExampleContainer.class).join();
+
+        container.getPlayer().sendMessage("Hello");
 
 ```
 
-But if there isn't something registered in the `Class<T>` cache with the `String`, it will create a new one from the `Object...`
-
+But if there isn't something registered in the `Class<T>` cache with the `String`, it will create a new one from
+the `Object...`
 
 ```java
 
-   ExampleContainer container = CacheHandler.getCache("exampleUniqueKey", ExampleContainer.class, "something").join();
-   
-   System.out.println(container.getSomething());
-   
-   // or...
-   
-   Player player;
-   String uuid;
-   
-   PlayerExampleContainer container = PlayerCacheHandler.getCache("exampleUniqueKey", PlayerExampleContainer.class, player, uuid).join();
-   
-   container.getPlayer().sendMessage("Hello");
+ExampleContainer container=CacheHandler.getCache("exampleUniqueKey",ExampleContainer.class,"something").join();
+
+        System.out.println(container.getSomething());
+
+        // or...
+
+        Player player;
+        String uuid;
+
+        PlayerExampleContainer container=PlayerCacheHandler.getCache("exampleUniqueKey",PlayerExampleContainer.class,player,uuid).join();
+
+        container.getPlayer().sendMessage("Hello");
 
 ```
 
@@ -149,36 +153,41 @@ Maven Information
 ------
 
 * Repository
+
 ```xml
 <repository>
-    <id>codemc-snapshots</id>
-    <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
 </repository>
 ```
- * Artifact Information:
+
+* Artifact Information:
+
 ```xml
 <dependency>
-    <groupId>com.uzm</groupId>
+    <groupId>com.github.JaelysonM</groupId>
     <artifactId>uzm-common</artifactId>
-    <version>LATEST</version>
-    <scope>provided</scope>
+    <version>2.0.5</version>
 </dependency>
  ```
 
 Gradle Information
 ------
 
- * Repository:
+* Repository:
+
 ```groovy
 repositories {
     maven {
-        url 'https://repo.codemc.io/repository/maven-snapshots/'
+        url 'https://jitpack.io'
     }
 }
 ```
- * Artifact:
+
+* Artifact:
+
 ```groovy
 dependencies {
-    compileOnly 'com.uzm:uzm-common:2.0.0'
+    compileOnly 'com.github.JaelysonM:uzm-common:2.0.5'
 }
 ```

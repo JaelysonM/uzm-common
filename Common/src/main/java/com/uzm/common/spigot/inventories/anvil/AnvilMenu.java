@@ -2,7 +2,6 @@ package com.uzm.common.spigot.inventories.anvil;
 
 import com.uzm.common.nms.NMS;
 import com.uzm.common.plugin.Common;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -19,12 +18,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 
-@Getter(AccessLevel.PUBLIC)
+/**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
+ * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
+ */
+
+@Getter
 public class AnvilMenu {
 
     private Player player;
     private HashMap<AnvilSlot, ItemStack> contents = new HashMap<AnvilSlot, ItemStack>();
-    @Setter(AccessLevel.PUBLIC)
+    @Setter
     private Inventory inventory;
     private Listener listener;
 
@@ -62,6 +68,7 @@ public class AnvilMenu {
                     }
                 }
             }
+
             @EventHandler
             public void onInventoryClose(InventoryCloseEvent event) {
                 if (event.getPlayer() instanceof Player) {
@@ -73,6 +80,7 @@ public class AnvilMenu {
                     }
                 }
             }
+
             @EventHandler
             public void onPlayerQuit(PlayerQuitEvent event) {
                 if (event.getPlayer().equals(getPlayer())) {
@@ -90,6 +98,7 @@ public class AnvilMenu {
         HandlerList.unregisterAll(this.listener);
         this.listener = null;
     }
+
     public void open() {
         NMS.open(this.player, this);
     }
@@ -119,6 +128,7 @@ public class AnvilMenu {
             return null;
         }
     }
+
     public class AnvilClickEvent {
         private AnvilSlot slot;
 
@@ -156,6 +166,7 @@ public class AnvilMenu {
             this.destroy = destroy;
         }
     }
+
     public interface AnvilClickEventHandler {
         void onAnvilClick(AnvilClickEvent event);
     }

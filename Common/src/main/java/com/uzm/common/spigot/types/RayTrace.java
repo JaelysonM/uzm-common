@@ -4,7 +4,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 /**
+ * A complete and upgradable plugin for <strong>any</strong> use for any project..
+ *
  * @author JotaMPê (UzmStudio)
+ * @version 2.0.5
  */
 
 public final class RayTrace {
