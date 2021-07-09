@@ -90,7 +90,7 @@ public class MySQLDatabase extends DatabaseSolution {
     public <T extends DataTable> Map<String, Map<String, DataContainer>> load(String key, Class<T>... tables) throws DataLoadExpection {
         Map<String, Map<String, DataContainer>> tableMap = new HashMap<>();
         for (DataTable table : DataTable.listTables().stream().filter(t -> t.getDatabaseSolution() == this).collect(Collectors.toList())) {
-            if (tables.length > 0 && Lists.newArrayList(tables).contains(table.getClass())) {
+            if (tables.length > 0 && Arrays.stream(tables).noneMatch(c -> c.isAssignableFrom(table.getClass()))) {
                 return null;
             }
             Map<String, DataContainer> containerMap = new LinkedHashMap<>();
@@ -136,6 +136,7 @@ public class MySQLDatabase extends DatabaseSolution {
 
     private void save0(String name, Map<String, Map<String, DataContainer>> tableMap, boolean async) {
         for (DataTable table : DataTable.listTables().stream().filter(t -> t.getDatabaseSolution() == this).collect(Collectors.toList())) {
+            if (!tableMap.containsKey(table.getInfo().name())) return;
             Map<String, DataContainer> rows = tableMap.get(table.getInfo().name());
             if (rows.values().stream().noneMatch(DataContainer::isUpdated)) {
                 continue;
