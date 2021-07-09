@@ -1,7 +1,6 @@
 package com.uzm.common.database.solutions;
 
 
-import com.google.common.collect.Lists;
 import com.uzm.common.database.data.DataContainer;
 import com.uzm.common.database.data.DataTable;
 import com.uzm.common.database.exceptions.DataLoadExpection;
@@ -139,7 +138,7 @@ public class SQLiteDatabase extends DatabaseSolution {
 
     private void save0(String name, Map<String, Map<String, DataContainer>> tableMap, boolean async) {
         for (DataTable table : DataTable.listTables().stream().filter(t -> t.getDatabaseSolution() == this).collect(Collectors.toList())) {
-            if (!tableMap.containsKey(table.getInfo().name())) return;
+            if (!tableMap.containsKey(table.getInfo().name())) continue;
             Map<String, DataContainer> rows = tableMap.get(table.getInfo().name());
             if (rows.values().stream().noneMatch(DataContainer::isUpdated)) {
                 continue;

@@ -23,6 +23,8 @@ public @interface DataTableInfo {
 
     String select();
 
+    String selectAll() default "";
+
     String insert();
 
     String update();

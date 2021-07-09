@@ -82,11 +82,6 @@ public class HirakiDatabase extends DatabaseSolution {
     }
 
     @Override
-    public Map<String, Map<String, DataContainer>> load(String key) throws DataLoadExpection {
-        return load(key);
-    }
-
-    @Override
     public <T extends DataTable> Map<String, Map<String, DataContainer>> load(String key, Class<T>... tables) throws DataLoadExpection {
         Map<String, Map<String, DataContainer>> tableMap = new HashMap<>();
         for (DataTable table : DataTable.listTables().stream().filter(t -> t.getDatabaseSolution() == this).collect(Collectors.toList())) {
@@ -135,7 +130,7 @@ public class HirakiDatabase extends DatabaseSolution {
 
     private void save0(String name, Map<String, Map<String, DataContainer>> tableMap, boolean async) {
         for (DataTable table : DataTable.listTables().stream().filter(t -> t.getDatabaseSolution() == this).collect(Collectors.toList())) {
-            if (!tableMap.containsKey(table.getInfo().name())) return;
+            if (!tableMap.containsKey(table.getInfo().name())) continue;
             Map<String, DataContainer> rows = tableMap.get(table.getInfo().name());
             if (rows.values().stream().noneMatch(DataContainer::isUpdated)) {
                 continue;
@@ -189,6 +184,11 @@ public class HirakiDatabase extends DatabaseSolution {
         if (isConnected()) {
             this.dataSource.close();
         }
+    }
+
+    @Override
+    public Map<String, Map<String, DataContainer>> load(String key) throws DataLoadExpection {
+        return this.load(key);
     }
 
     public boolean isConnected() {
