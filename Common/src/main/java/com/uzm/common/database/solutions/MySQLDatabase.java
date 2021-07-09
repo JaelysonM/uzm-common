@@ -91,7 +91,7 @@ public class MySQLDatabase extends DatabaseSolution {
         Map<String, Map<String, DataContainer>> tableMap = new HashMap<>();
         for (DataTable table : DataTable.listTables().stream().filter(t -> t.getDatabaseSolution() == this).collect(Collectors.toList())) {
             if (tables.length > 0 && Arrays.stream(tables).noneMatch(c -> c.isAssignableFrom(table.getClass()))) {
-                return null;
+                continue;
             }
             Map<String, DataContainer> containerMap = new LinkedHashMap<>();
             tableMap.put(table.getInfo().name(), containerMap);
