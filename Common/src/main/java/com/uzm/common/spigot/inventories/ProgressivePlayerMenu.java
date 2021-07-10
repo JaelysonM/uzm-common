@@ -72,7 +72,6 @@ public abstract class ProgressivePlayerMenu extends ProgressiveMenu implements L
                 ItemStack item = event.getCurrentItem();
                 if (item != null && item.getType() != Material.AIR) {
                     this.click(event);
-
                 }
             }
         }

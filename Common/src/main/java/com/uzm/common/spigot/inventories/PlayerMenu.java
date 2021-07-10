@@ -1,6 +1,7 @@
 package com.uzm.common.spigot.inventories;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -8,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -68,8 +70,10 @@ public abstract class PlayerMenu extends Menu implements Listener {
         if (event.getInventory().equals(this.getInventory())) {
             event.setCancelled(true);
             if (event.getClickedInventory() != null && event.getClickedInventory().equals(this.getInventory())) {
-                player.updateInventory();
-                click(event);
+                ItemStack item = event.getCurrentItem();
+                if (item != null && item.getType() != Material.AIR) {
+                    this.click(event);
+                }
             }
         }
     }
