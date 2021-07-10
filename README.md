@@ -167,7 +167,7 @@ Maven Information
 <dependency>
     <groupId>com.github.JaelysonM</groupId>
     <artifactId>uzm-common</artifactId>
-    <version>2.0.5</version>
+    <version>2.0.6</version>
 </dependency>
  ```
 
@@ -188,6 +188,6 @@ repositories {
 
 ```groovy
 dependencies {
-    compileOnly 'com.github.JaelysonM:uzm-common:2.0.5'
+    compileOnly 'com.github.JaelysonM:uzm-common:2.0.6'
 }
 ```

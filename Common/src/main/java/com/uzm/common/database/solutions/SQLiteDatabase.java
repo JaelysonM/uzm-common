@@ -13,6 +13,7 @@ import java.io.File;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  * A complete and upgradable plugin for <strong>any</strong> use for any project..
  *
  * @author JotaMPê (UzmStudio)
- * @version 2.0.5
+ * @version 2.0.6
  */
 
 public class SQLiteDatabase extends DatabaseSolution {
@@ -55,6 +56,24 @@ public class SQLiteDatabase extends DatabaseSolution {
         }
     }
 
+    @Override
+    public void loadAll(DataTable dataTable, BiConsumer<String, Map<String, Map<String, DataContainer>>> consumer) throws SQLException {
+        Map<String, Map<String, Map<String, DataContainer>>> companyMap = new HashMap<>();
+        CachedRowSet rs = query(dataTable.getInfo().selectAll());
+        if (rs != null) {
+            if (rs.size() > 1) {
+                companyMap.put(rs.getString(dataTable.getInfo().key()), loadTablesMap(dataTable, rs));
+                while (rs.next()) {
+                    companyMap.put(rs.getString(dataTable.getInfo().key()), loadTablesMap(dataTable, rs));
+                }
+            } else {
+                companyMap.put(rs.getString(dataTable.getInfo().key()), loadTablesMap(dataTable, rs));
+            }
+
+            companyMap.forEach(consumer);
+        }
+    }
+
 
     @Override
     public List<String[]> getLeaderBoard(DataTable table, String... columns) {
@@ -65,7 +84,7 @@ public class SQLiteDatabase extends DatabaseSolution {
             select.append("`").append(column).append("`, ");
         }
 
-        try (CachedRowSet rs = query("SELECT " + select + "`name` FROM `" + table.getInfo().name() + "` ORDER BY " + add + " 0 DESC LIMIT 10")) {
+        try (CachedRowSet rs = query("SELECT " + select + "`" + table.getInfo().key() + "` FROM `" + table.getInfo().name() + "` ORDER BY " + add + " 0 DESC LIMIT 10")) {
             if (rs != null) {
                 rs.beforeFirst();
                 while (rs.next()) {

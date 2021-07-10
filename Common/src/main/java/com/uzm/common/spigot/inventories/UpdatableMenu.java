@@ -10,7 +10,7 @@ import org.bukkit.scheduler.BukkitTask;
  * A complete and upgradable plugin for <strong>any</strong> use for any project..
  *
  * @author JotaMPê (UzmStudio)
- * @version 2.0.5
+ * @version 2.0.6
  */
 
 public abstract class UpdatableMenu extends Menu implements Listener {

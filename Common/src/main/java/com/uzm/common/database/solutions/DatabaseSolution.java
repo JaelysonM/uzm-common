@@ -12,19 +12,22 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.sql.rowset.CachedRowSet;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BiConsumer;
 
 /**
  * A complete and upgradable plugin for <strong>any</strong> use for any project..
  *
  * @author JotaMPê (UzmStudio)
- * @version 2.0.5
+ * @version 2.0.6
  */
 
 @Getter(AccessLevel.MODULE)
@@ -108,5 +111,16 @@ public abstract class DatabaseSolution extends CacheHandler {
 
     public abstract String exists(String name);
 
+    public abstract void loadAll(DataTable dataTable, BiConsumer<String, Map<String, Map<String, DataContainer>>> consumer) throws SQLException;
+
+    public Map<String, Map<String, DataContainer>> loadTablesMap(DataTable dataTable, CachedRowSet rs) throws SQLException {
+        Map<String, DataContainer> containerMap = new LinkedHashMap<>();
+        Map<String, Map<String, DataContainer>> tableMap = new LinkedHashMap<>();
+        for (int collumn = 2; collumn <= rs.getMetaData().getColumnCount(); collumn++) {
+            containerMap.put(rs.getMetaData().getColumnName(collumn), new DataContainer(rs.getObject(collumn)));
+        }
+        tableMap.put(dataTable.getInfo().name(), containerMap);
+        return tableMap;
+    }
 
 }

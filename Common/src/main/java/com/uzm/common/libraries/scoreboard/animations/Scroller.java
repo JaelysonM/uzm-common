@@ -13,7 +13,7 @@ import java.util.List;
  * A complete and updatable plugin for any usages.
  *
  * @author JotaMPê (UzmStudio)
- * @version 2.0.5
+ * @version 2.0.6
  */
 
 @Data
