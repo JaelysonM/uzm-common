@@ -93,14 +93,21 @@ public class AnvilMenu {
 
     public void destroy() {
         this.player = null;
-        this.contents.clear();
+        if (this.contents != null)
+            this.contents.clear();
+
         this.contents = null;
-        HandlerList.unregisterAll(this.listener);
+        if (this.listener != null)
+            HandlerList.unregisterAll(this.listener);
         this.listener = null;
     }
 
     public void open() {
         NMS.open(this.player, this);
+    }
+
+    public void setSlot(AnvilSlot anvilSlot, ItemStack itemStack) {
+        this.getContents().put(anvilSlot, itemStack);
     }
 
     public enum AnvilSlot {
